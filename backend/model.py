@@ -62,8 +62,8 @@ class UserProfile(db.Model):
         """Validate that the user's age is between 14 and 20 years."""
         today = date.today()
         age = today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
-        if not (14 <= age <= 20):
-            raise ValueError("User age must be between 14 and 20 years.")
+        if not (14 <= age <= 60):
+            raise ValueError("User age must be between 14 and 60 years.")
 
 # Parental Control Model
 class ParentalControl(db.Model):

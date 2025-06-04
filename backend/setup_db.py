@@ -8,11 +8,11 @@ with app.app_context():
     db.create_all()
 
     # Create an initial admin user
-    admin_username = "21f1001520"
-    admin_email = "21f1001520@ds.study.iitm.ac.in"
+    admin_username = "21f1003171"
+    admin_email = "21f1003171@ds.study.iitm.ac.in"
     admin_password = "123456"
-    admin_full_name = "Admin One"
-    admin_birth_date = date(2005, 6, 1)  # Age 19 as of June 3, 2025
+    admin_full_name = "Yoga"
+    admin_birth_date = date(1975, 9, 13)  # Age 19 as of June 3, 2025
 
     # Check if the admin already exists to avoid duplicates
     existing_user = User.query.filter_by(username=admin_username).first()
