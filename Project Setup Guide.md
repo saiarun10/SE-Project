@@ -21,9 +21,16 @@ This project consists of a **Flask** backend and a **Vue.js 3** frontend. Follow
    ```
 
 2. **Create a virtual environment**:
-   ```bash
-   python -m venv venv
-   ```
+   - On Windows:
+     ```bash
+     python -m venv venv
+     ```
+   - On macOS/Linux:
+     ```bash
+     python3 -m venv venv
+     ```
+
+
 
 3. **Activate the virtual environment**:
    - On Windows:
