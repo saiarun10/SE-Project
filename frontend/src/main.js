@@ -9,6 +9,9 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap';
 import 'chart.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 
 const BASE_URL = `${import.meta.env.VITE_BASE_URL}/api`;
