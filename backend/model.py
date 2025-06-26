@@ -23,7 +23,6 @@ class User(db.Model):
 
     # Relationships
     profile = db.relationship('UserProfile', backref='user', lazy=True, uselist=False, cascade='all, delete-orphan')
-    parental_controls = db.relationship('ParentalControl', backref='user', lazy=True, uselist=False, cascade='all, delete-orphan')
     sessions = db.relationship('UserSession', backref='user', lazy=True, cascade='all, delete-orphan')
     topic_progress = db.relationship('UserTopicProgress', backref='user', lazy=True, cascade='all, delete-orphan')
     quiz_attempts = db.relationship('QuizAttempt', backref='user', lazy=True, cascade='all, delete-orphan')
@@ -54,7 +53,9 @@ class UserProfile(db.Model):
     full_name = db.Column(db.String(100))
     phone_number = db.Column(db.String(20))
     birth_date = db.Column(db.Date, nullable=False)
-    profile_image_url = db.Column(db.String(255))
+    gender = db.Column(db.String(10), nullable=False)  #
+    parent_email = db.Column(db.String(255))
+    parent_password_hash = db.Column(db.String(255)) # Hashed password for parental controls
     created_at = db.Column(db.DateTime, default=get_current_ist)
     updated_at = db.Column(db.DateTime, default=get_current_ist, onupdate=get_current_ist)
 
@@ -65,16 +66,6 @@ class UserProfile(db.Model):
         if not (14 <= age <= 60):
             raise ValueError("User age must be between 14 and 60 years.")
 
-# Parental Control Model
-class ParentalControl(db.Model):
-    __tablename__ = 'parental_controls'
-
-    parental_control_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False, unique=True, index=True)
-    parent_email = db.Column(db.String(255), nullable=False)
-    access_level = db.Column(db.String(50), nullable=False, default='view_progress')  # 'view_progress', 'view_all', 'restrict_content'
-    created_at = db.Column(db.DateTime, default=get_current_ist)
-    updated_at = db.Column(db.DateTime, default=get_current_ist, onupdate=get_current_ist)
 
 # User Session Model
 class UserSession(db.Model):
@@ -83,14 +74,12 @@ class UserSession(db.Model):
     session_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False, index=True)
     client_ip = db.Column(db.String(45))
-    user_agent = db.Column(db.Text)
-    device_info = db.Column(db.String(255))
-    mac_address = db.Column(db.String(17))
-    memory_size_gb = db.Column(db.Float)
-    cpu_core_count = db.Column(db.Integer)
     login_at = db.Column(db.DateTime, default=get_current_ist)
     logout_at = db.Column(db.DateTime)
-    session_duration_seconds = db.Column(db.Integer)
+    session_token = db.Column(db.String(255))
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    created_at = db.Column(db.DateTime, default=get_current_ist)
+    updated_at = db.Column(db.DateTime, default=get_current_ist, onupdate=get_current_ist)
 
     chatbot_messages = db.relationship('ChatbotMessage', backref='session', lazy=True, cascade='all, delete-orphan')
 

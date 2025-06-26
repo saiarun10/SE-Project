@@ -1,3 +1,4 @@
+# setup_db.py
 from app import app
 from model import db, User, UserProfile
 from werkzeug.security import generate_password_hash
@@ -12,7 +13,7 @@ with app.app_context():
     admin_email = "21f1003171@ds.study.iitm.ac.in"
     admin_password = "123456"
     admin_full_name = "Yoga"
-    admin_birth_date = date(1975, 9, 13)  # Age 19 as of June 3, 2025
+    admin_birth_date = date(2005, 9, 13)  # Age 19 as of June 26, 2025
 
     # Check if the admin already exists to avoid duplicates
     existing_user = User.query.filter_by(username=admin_username).first()
@@ -30,7 +31,8 @@ with app.app_context():
         admin_profile = UserProfile(
             user_id=new_admin.user_id,
             full_name=admin_full_name,
-            birth_date=admin_birth_date
+            birth_date=admin_birth_date,
+            gender="male"  # Provide a valid gender string
         )
         try:
             admin_profile.validate_age()  # Validate age
@@ -40,6 +42,9 @@ with app.app_context():
         except ValueError as e:
             db.session.rollback()
             print(f"Failed to create admin profile: {e}")
+        except Exception as e:
+            db.session.rollback()
+            print(f"Unexpected error: {e}")
     else:
         print(f"Admin '{admin_username}' already exists, skipping creation.")
     print("Database setup complete.")
