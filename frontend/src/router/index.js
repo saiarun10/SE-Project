@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import store from '@/store';
 import Home from '@/components/Home.vue';
 import About from '@/components/About.vue';
+import ExpenseTracker from '../components/ExpenseTracker.vue';
+import ExpenseInterface from '../components/ExpenseInterface.vue';
+import AddExpense from '../components/AddExpense.vue';
 // import Login from '@/components/Login.vue';
 // import Signup from '@/components/Signup.vue';
 // import AdminDashboard from '@/components/AdminDashboard.vue';
@@ -10,6 +13,9 @@ import About from '@/components/About.vue';
 const routes = [
   { path: '/', component: Home, name: 'Home' },
   { path: '/about', component: About, name: 'About' },
+  { path: '/expense_tracker', component: ExpenseTracker, name: 'ExpenseTracker' },
+  { path: '/expense_interface', component: ExpenseInterface, name: 'ExpenseInterface' },
+  { path: '/add_expense', component: AddExpense, name: 'AddExpense' },
   // { path: '/login', component: Login, name: 'Login' },
   // { path: '/signup', component: Signup, name: 'Signup' },
   // {
