@@ -1,13 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date
-import pytz
-
+from api_utils import get_current_ist
 # Initialize SQLAlchemy
 db = SQLAlchemy()
-
-def get_current_ist():
-    """Returns the current datetime in Asia/Kolkata timezone."""
-    return datetime.now()
 
 # User Model
 class User(db.Model):
