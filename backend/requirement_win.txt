@@ -89,4 +89,13 @@ user-agents
 weasyprint
 webencodings
 zopfli
-
+flask-sqlalchemy
+flask-jwt-extended
+flask-caching
+celery
+redis
+python-dotenv
+werkzeug
+pytz
+flasgger
+flask_restx
