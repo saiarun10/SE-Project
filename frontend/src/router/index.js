@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import store from '@/store';
 import Home from '@/components/Home.vue';
 import About from '@/components/About.vue';
+import UserProfile from '../components/UserProfile.vue';
 // import Login from '@/components/Login.vue';
 // import Signup from '@/components/Signup.vue';
 // import AdminDashboard from '@/components/AdminDashboard.vue';
@@ -10,6 +11,7 @@ import About from '@/components/About.vue';
 const routes = [
   { path: '/', component: Home, name: 'Home' },
   { path: '/about', component: About, name: 'About' },
+  { path: '/profile', component: UserProfile, name: 'UserProfile' },
   // { path: '/login', component: Login, name: 'Login' },
   // { path: '/signup', component: Signup, name: 'Signup' },
   // {
