@@ -1,29 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import store from '@/store';
-import Home from '@/components/Home.vue';
-import About from '@/components/About.vue';
-// import Login from '@/components/Login.vue';
-// import Signup from '@/components/Signup.vue';
-// import AdminDashboard from '@/components/AdminDashboard.vue';
-// import UserDashboard from '@/components/UserDashboard.vue';
+import HomeView from '../views/HomeView.vue';
+import AboutView from '../views/AboutView.vue'
+import ContactView from '../views/ContactView.vue'
+import AdminDashboard from '../views/AdminDashboard.vue';
+import UserDashboard from '../views/UserDashboard.vue';
+import LoginView from '../views/Login.vue';
+import SignupView from '../views/Signup.vue';
+import store from '../store';
 
 const routes = [
-  { path: '/', component: Home, name: 'Home' },
-  { path: '/about', component: About, name: 'About' },
-  // { path: '/login', component: Login, name: 'Login' },
-  // { path: '/signup', component: Signup, name: 'Signup' },
-  // {
-  //   path: '/admin-dashboard',
-  //   component: AdminDashboard,
-  //   meta: { requiresAuth: true, role: 'admin' },
-  //   name: 'AdminDashboard',
-  // },
-  // {
-  //   path: '/user-dashboard',
-  //   component: UserDashboard,
-  //   meta: { requiresAuth: true, role: 'user' },
-  //   name: 'UserDashboard',
-  // },
+  { path: '/', name: 'Home', component: HomeView },
+  { path: '/about', name: 'About', component: AboutView },
+  { path: '/contact', name: 'Contact', component: ContactView },
+  { path: '/login', name: 'Login', component: LoginView },
+  { path: '/signup', name: 'Signup', component: SignupView },
+  {
+    path: '/user-dashboard',
+    name: 'UserDashboard',
+    component: UserDashboard,
+    meta: { requiresAuth: true, role: 'user' },
+  },
+  {
+    path: '/admin-dashboard',
+    name: 'AdminDashboard',
+    component: AdminDashboard,
+    meta: { requiresAuth: true, role: 'admin' },
+  },
 ];
 
 const router = createRouter({
@@ -31,33 +33,17 @@ const router = createRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   const isAuthenticated = store.state.access_token;
-//   const userRole = store.state.user.user_role || 'user';
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = store.getters.isAuthenticated;
+  const userRole = store.getters.userRole;
 
-//   // Prevent authenticated users from accessing public routes
-//   if (isAuthenticated && (to.name === 'Login' || to.name === 'Signup' || to.name === 'Home')) {
-//     const redirectPath = userRole === 'admin' ? '/admin-dashboard' : '/user-dashboard';
-//     if (to.path !== redirectPath) {
-//       next(redirectPath);
-//     } else {
-//       next();
-//     }
-//   }
-//   // Handle protected routes
-//   else if (to.meta.requiresAuth) {
-//     if (!isAuthenticated) {
-//       next({ path: '/login', query: { redirect: to.fullPath } });
-//     } else if (to.meta.role && to.meta.role !== userRole) {
-//       next(userRole === 'admin' ? '/admin-dashboard' : '/user-dashboard');
-//     } else {
-//       next();
-//     }
-//   }
-//   // Allow public routes
-//   else {
-//     next();
-//   }
-// });
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ name: 'Home' });
+  } else if (to.meta.role && to.meta.role !== userRole) {
+    next({ name: 'Home' });
+  } else {
+    next();
+  }
+});
 
 export default router;

@@ -12,6 +12,9 @@ import 'chart.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import '@fortawesome/fontawesome-free/css/all.css';
+import '@fortawesome/fontawesome-free/js/all.js';
+
 
 
 const BASE_URL = `${import.meta.env.VITE_BASE_URL}/api`;
