@@ -1,57 +1,73 @@
 <template>
- <Navbar />
+  <Navbar />
   <div class="container py-5">
-    <Alert v-if="alert.visible" :message="alert.message" :type="alert.type" @close="alert.visible = false" />
+    <Alert
+      v-if="alert.visible"
+      :message="alert.message"
+      :type="alert.type"
+      @close="alert.visible = false"
+    />
 
-    <h2 class="mb-4 text-center">Your Profile</h2>
+    <h2 class="mb-4 text-center text-primary fw-bold">Your Profile</h2>
 
-    <div class="card shadow p-4 mx-auto animated fadeIn" style="max-width: 640px;">
-      <!-- Avatar with Bootstrap Icon -->
-      <div class="text-center mb-4">
+    <div
+      class="shadow-lg p-4 mx-auto rounded-4 bg-gradient"
+      style="max-width: 720px; background: linear-gradient(to right, #f0f8ff, #ffe6f0); border: none;"
+    >
+      <!-- Avatar -->
+      <div class="d-flex justify-content-center mb-4">
         <div
-          class="rounded-circle d-flex align-items-center justify-content-center bg-light border border-primary border-3 shadow"
-          style="width: 120px; height: 120px; font-size: 48px; color: #4b5efc;"
+          class="rounded-circle shadow d-flex align-items-center justify-content-center"
+          :style="avatarStyle"
         >
-          <i :class="avatarIconClass"></i>
+          <i :class="avatarIconClass" class="text-white" style="font-size: 48px;"></i>
         </div>
       </div>
 
-      <!-- Profile Fields -->
+      <!-- Username -->
       <div class="form-group mb-3">
-        <label class="form-label"><i class="fas fa-user"></i> Username</label>
+        <label class="form-label text-primary"><i class="fas fa-user"></i> Username</label>
         <input type="text" class="form-control" :value="profile.username" disabled />
       </div>
 
+      <!-- Email -->
       <div class="form-group mb-3">
-        <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+        <label class="form-label text-primary"><i class="fas fa-envelope"></i> Email</label>
         <input type="email" class="form-control" :value="profile.email" disabled />
       </div>
 
+      <!-- Full Name -->
       <div class="form-group mb-3">
-        <label class="form-label"><i class="fas fa-id-badge"></i> Full Name</label>
+        <label class="form-label text-primary"><i class="fas fa-id-badge"></i> Full Name</label>
         <input v-model="profile.full_name" type="text" class="form-control" :disabled="!isEditing" />
         <small v-if="errors.full_name" class="text-danger">{{ errors.full_name }}</small>
       </div>
 
-      <div class="form-group mb-3">
-        <label class="form-label"><i class="fas fa-venus-mars"></i> Gender</label>
-        <select v-model="profile.gender" class="form-select" :disabled="!isEditing">
-          <option value="">-- Select Gender --</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-        <small v-if="errors.gender" class="text-danger">{{ errors.gender }}</small>
+      <!-- Gender & Birth Date -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label text-primary"><i class="fas fa-venus-mars"></i> Gender</label>
+          <select v-model="profile.gender" class="form-select" :disabled="!isEditing">
+            <option value="">-- Select Gender --</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+          <small v-if="errors.gender" class="text-danger">{{ errors.gender }}</small>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-primary"><i class="fas fa-calendar-alt"></i> Birth Date</label>
+          <input v-model="profile.birth_date" type="date" class="form-control" :disabled="!isEditing" />
+          <small v-if="errors.birth_date" class="text-danger">{{ errors.birth_date }}</small>
+          <div v-if="profile.birth_date && !isEditing" class="text-muted small mt-1">
+            <i class="fas fa-hourglass-half"></i> Age: {{ age }}
+          </div>
+        </div>
       </div>
 
+      <!-- Parent Email -->
       <div class="form-group mb-3">
-        <label class="form-label"><i class="fas fa-calendar-alt"></i> Birth Date</label>
-        <input v-model="profile.birth_date" type="date" class="form-control" :disabled="!isEditing" />
-        <small v-if="errors.birth_date" class="text-danger">{{ errors.birth_date }}</small>
-      </div>
-
-      <div class="form-group mb-3">
-        <label class="form-label"><i class="fas fa-user-shield"></i> Parent Email</label>
+        <label class="form-label text-primary"><i class="fas fa-user-shield"></i> Parent Email</label>
         <div v-if="profile.parent_email">
           <input type="email" class="form-control" :value="profile.parent_email" disabled />
         </div>
@@ -62,22 +78,38 @@
         </div>
       </div>
 
+      <!-- Date of Joining -->
       <div class="form-group mb-3">
-        <label class="form-label"><i class="fas fa-calendar-check"></i> Date of Joining</label>
-        <input type="text" class="form-control" :value="new Date(profile.created_at).toLocaleDateString()" disabled />
+        <label class="form-label text-primary"><i class="fas fa-calendar-check"></i> Date of Joining</label>
+        <input
+          type="text"
+          class="form-control"
+          :value="formatJoinDate(profile.created_at)"
+          disabled
+        />
       </div>
 
-      <div class="form-group mb-3">
-        <label class="form-label"><i class="fas fa-star"></i> Membership Status</label>
-        <div>
-          <span v-if="profile.is_premium_user" class="badge bg-success">Premium User</span>
-          <router-link v-else to="/buy-premium" class="btn btn-warning btn-sm">
-            <i class="fas fa-crown"></i> Buy Premium
-          </router-link>
-        </div>
+      <!-- Membership Status -->
+      <div class="form-group mb-4">
+        <label class="form-label text-primary me-3">
+          <i class="fas fa-star"></i> Membership Status
+        </label>
+        <span
+          class="badge fs-6 px-3 py-2"
+          :class="profile.is_premium_user ? 'bg-success' : 'bg-secondary'"
+        >
+          {{ profile.is_premium_user ? 'Premium User' : 'Free User' }}
+        </span>
+        <router-link
+          v-if="!profile.is_premium_user"
+          to="/buy-premium"
+          class="btn btn-warning ms-3 shadow-sm"
+        >
+          <i class="fas fa-crown"></i> Buy Premium
+        </router-link>
       </div>
 
-      <!-- Action Buttons -->
+      <!-- Buttons -->
       <div class="text-center mt-4">
         <button
           v-if="isEditing"
@@ -102,43 +134,19 @@
         </button>
       </div>
     </div>
-
-    <!-- Parent Email Modal -->
-    <div v-if="showParentEmailModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Set Parent Email</h5>
-            <button type="button" class="btn-close" @click="closeParentEmailModal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Parent Email</label>
-              <input v-model="parentEmailForm.parent_email" type="email" class="form-control" />
-              <small v-if="errors.parent_email" class="text-danger">{{ errors.parent_email }}</small>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Parent Password</label>
-              <input v-model="parentEmailForm.parent_password" type="password" class="form-control" />
-              <small v-if="errors.parent_password" class="text-danger">{{ errors.parent_password }}</small>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" @click="closeParentEmailModal">Cancel</button>
-            <button class="btn btn-primary" @click="setParentEmail">Confirm</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-    <AppFooter />
+  </div>
+  <AppFooter />
 </template>
 
 <script>
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 import axios from 'axios';
 import Alert from '@/components/Alert.vue';
 import Navbar from '@/components/Navbar.vue';
-import AppFooter from '@/components/Footer.vue'; 
+import AppFooter from '@/components/Footer.vue';
+
 export default {
   name: 'ProfileView',
   components: { Alert, Navbar, AppFooter },
@@ -157,17 +165,12 @@ export default {
       },
       originalProfile: {},
       isEditing: false,
-      showParentEmailModal: false,
-      parentEmailForm: {
-        parent_email: '',
-        parent_password: ''
-      },
-      errors: {},
       alert: {
         visible: false,
         message: '',
         type: 'notification'
-      }
+      },
+      errors: {}
     };
   },
   computed: {
@@ -176,24 +179,38 @@ export default {
       if (gender === 'male') return 'bi bi-person-fill';
       if (gender === 'female') return 'bi bi-person-fill';
       return 'bi bi-person-circle';
+    },
+    avatarStyle() {
+      const base = 'width: 120px; height: 120px;';
+      if (this.profile.gender === 'male') return base + ' background-color: #003f8a;';
+      if (this.profile.gender === 'female') return base + ' background-color: #a30566;';
+      return base + ' background-color: #343a40;';
+    },
+    age() {
+      if (!this.profile.birth_date) return '';
+      const birth = new Date(this.profile.birth_date);
+      const today = new Date();
+
+      let years = today.getFullYear() - birth.getFullYear();
+      let months = today.getMonth() - birth.getMonth();
+      let days = today.getDate() - birth.getDate();
+
+      if (days < 0) {
+        months--;
+        days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      return `${years}y ${months}m ${days}d`;
     }
   },
-  async mounted() {
-    await this.fetchProfile();
-  },
   methods: {
-    validateProfile() {
-      this.errors = {};
-      if (!this.profile.full_name.trim()) {
-        this.errors.full_name = 'Full name is required';
-      }
-      if (!['male', 'female', 'other'].includes(this.profile.gender)) {
-        this.errors.gender = 'Gender must be selected';
-      }
-      if (!this.profile.birth_date) {
-        this.errors.birth_date = 'Birth date is required';
-      }
-      return Object.keys(this.errors).length === 0;
+    formatJoinDate(dateStr) {
+      const options = { day: 'numeric', month: 'long', year: 'numeric' };
+      return new Date(dateStr).toLocaleDateString('en-IN', options);
     },
     async fetchProfile() {
       try {
@@ -202,12 +219,17 @@ export default {
         });
         this.profile = response.data;
         this.originalProfile = { ...response.data };
-      } catch (error) {
-        this.showAlert('Failed to load profile', 'error');
+      } catch (err) {
+        this.alert = { visible: true, message: 'Failed to load profile', type: 'error' };
       }
     },
     async saveProfile() {
-      if (!this.validateProfile()) return;
+      this.errors = {};
+      if (!this.profile.full_name) this.errors.full_name = 'Full name is required';
+      if (!this.profile.gender) this.errors.gender = 'Gender is required';
+      if (!this.profile.birth_date) this.errors.birth_date = 'Birth date is required';
+      if (Object.keys(this.errors).length > 0) return;
+
       try {
         const response = await axios.put(
           `${import.meta.env.VITE_BASE_URL}/api/get_user_profile`,
@@ -221,9 +243,9 @@ export default {
         this.profile = response.data;
         this.originalProfile = { ...response.data };
         this.isEditing = false;
-        this.showAlert('Profile updated successfully', 'success');
-      } catch (error) {
-        this.showAlert(error.response?.data?.error || 'Failed to update profile', 'error');
+        this.alert = { visible: true, message: 'Profile updated successfully', type: 'success' };
+      } catch (err) {
+        this.alert = { visible: true, message: 'Update failed', type: 'error' };
       }
     },
     cancelEdit() {
@@ -231,35 +253,26 @@ export default {
       this.isEditing = false;
     },
     openParentEmailModal() {
-      this.showParentEmailModal = true;
-    },
-    closeParentEmailModal() {
-      this.showParentEmailModal = false;
-      this.parentEmailForm = { parent_email: '', parent_password: '' };
-      this.errors = {};
-    },
-    async setParentEmail() {
-      this.errors = {};
-      if (!this.parentEmailForm.parent_email) this.errors.parent_email = 'Parent email is required';
-      if (!this.parentEmailForm.parent_password) this.errors.parent_password = 'Parent password is required';
-      if (Object.keys(this.errors).length > 0) return;
-      try {
-        await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/api/set_parent_email`,
-          this.parentEmailForm,
-          { headers: { Authorization: `Bearer ${this.$store.state.token}` } }
-        );
-        this.closeParentEmailModal();
-        await this.fetchProfile();
-        this.showAlert('Parent email set successfully', 'success');
-      } catch (error) {
-        this.showAlert(error.response?.data?.error || 'Failed to set parent email', 'error');
-      }
-    },
-    showAlert(message, type) {
-      this.alert = { visible: true, message, type };
+      // Placeholder: modal open logic
     }
+  },
+  mounted() {
+    this.fetchProfile();
   }
 };
 </script>
 
+<style scoped>
+button.btn:hover {
+  filter: brightness(1.1);
+}
+.bg-gradient {
+  background: linear-gradient(135deg, #f0f8ff, #ffe6f0);
+  border-radius: 1rem;
+}
+input:disabled,
+select:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+</style>
