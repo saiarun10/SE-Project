@@ -6,6 +6,9 @@ import AdminDashboard from '../views/AdminDashboard.vue';
 import UserDashboard from '../views/UserDashboard.vue';
 import LoginView from '../views/Login.vue';
 import SignupView from '../views/Signup.vue';
+import ProfileView from '../views/Profile.vue';
+import UserSummaryView from '../views/UserSummary.vue';
+import BuyPremiumView from '../views/BuyPremium.vue';
 import store from '../store';
 
 const routes = [
@@ -26,6 +29,25 @@ const routes = [
     component: AdminDashboard,
     meta: { requiresAuth: true, role: 'admin' },
   },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfileView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/buy-premium',
+    name: 'BuyPremium',
+    component: BuyPremiumView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/user-summary',
+    name: 'UserSummary',
+    component: UserSummaryView,
+    meta: { requiresAuth: true, role: 'user' },
+  },
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: HomeView },
 ];
 
 const router = createRouter({

@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div>
     <div class="container py-5">
       <!-- Header -->
@@ -54,11 +55,13 @@
 
 <script>
 import AppFooter from '../components/Footer.vue'
+import Navbar from '../components/Navbar.vue'
 
 export default {
   name: 'UserDashboard',
   components: {
-    AppFooter
+    AppFooter,
+    Navbar
   },
   data() {
     return {
