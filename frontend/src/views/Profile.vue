@@ -1,4 +1,5 @@
 <template>
+ <Navbar />
   <div class="container py-5">
     <Alert v-if="alert.visible" :message="alert.message" :type="alert.type" @close="alert.visible = false" />
 
@@ -129,16 +130,18 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+    <AppFooter />
 </template>
 
 <script>
 import axios from 'axios';
 import Alert from '@/components/Alert.vue';
-
+import Navbar from '@/components/Navbar.vue';
+import AppFooter from '@/components/Footer.vue'; 
 export default {
   name: 'ProfileView',
-  components: { Alert },
+  components: { Alert, Navbar, AppFooter },
   data() {
     return {
       profile: {
@@ -194,7 +197,7 @@ export default {
     },
     async fetchProfile() {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/profile/get_user_profile`, {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/get_user_profile`, {
           headers: { Authorization: `Bearer ${this.$store.state.token}` }
         });
         this.profile = response.data;
@@ -207,7 +210,7 @@ export default {
       if (!this.validateProfile()) return;
       try {
         const response = await axios.put(
-          `${import.meta.env.VITE_BASE_URL}/api/profile/get_user_profile`,
+          `${import.meta.env.VITE_BASE_URL}/api/get_user_profile`,
           {
             full_name: this.profile.full_name,
             gender: this.profile.gender,
@@ -242,7 +245,7 @@ export default {
       if (Object.keys(this.errors).length > 0) return;
       try {
         await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/api/profile/set_parent_email`,
+          `${import.meta.env.VITE_BASE_URL}/api/set_parent_email`,
           this.parentEmailForm,
           { headers: { Authorization: `Bearer ${this.$store.state.token}` } }
         );

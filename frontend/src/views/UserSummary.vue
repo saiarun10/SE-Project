@@ -1,4 +1,5 @@
 <template>
+    <Navbar />
   <div class="container py-5">
     <Alert v-if="alert.visible" :message="alert.message" :type="alert.type" @close="alert.visible = false" />
     
@@ -29,15 +30,17 @@
       </div>
     </div>
   </div>
+    <AppFooter />
 </template>
 
 <script>
 import axios from 'axios';
 import Alert from '@/components/Alert.vue';
-
+import Navbar from '../components/Navbar.vue';
+import AppFooter from '../components/Footer.vue';
 export default {
   name: 'UserSummaryView',
-  components: { Alert },
+  components: { Alert, Navbar, AppFooter },
   data() {
     return {
       sessions: [],

@@ -1,4 +1,5 @@
 <template>
+  <AppNavbar />
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-lg-8">
@@ -31,11 +32,22 @@
       </div>
     </div>
   </div>
+  <AppFooter />
 </template>
 
 <script>
+
+import App from '../App.vue';
+import AppNavbar from '../components/Navbar.vue';
+import AppFooter from '../components/Footer.vue';
+import Alert from '@/components/Alert.vue';
 export default {
-  name: 'ContactView'
+  name: 'ContactView',
+  components: {
+    AppNavbar,
+    AppFooter,
+    Alert
+  }
 }
 </script>
 
