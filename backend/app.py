@@ -1,29 +1,24 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from flasgger import Swagger
 from config import get_config
 from model import db
-from routes.auth import auth_bp
-from datetime import date
-from flask.json.provider import DefaultJSONProvider
-import json
-
-class CustomJSONProvider(DefaultJSONProvider):
-    """Custom JSON provider to handle date objects"""
-    def default(self, obj):
-        if isinstance(obj, date):
-            return obj.isoformat()
-        return super().default(obj)
+from api_utils import CustomJSONProvider
+from routes.auth import auth_ns
+from routes.profile import profile_ns
+from swagger_setup import configure_swagger  # Import Swagger configuration
+# Import other namespaces as needed
+# from routes.learn import learn_ns
+# from routes.quiz import quiz_ns
 
 def create_app():
     app = Flask(__name__)
     config_class = get_config()
     app.config.from_object(config_class)
-    
+
     # Set custom JSON provider
     app.json = CustomJSONProvider(app)
-    
+
     # Initialize logging
     config_class.init_logging()
 
@@ -32,32 +27,17 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
-    jwt = JWTManager(app)
-    
-    # Configure Swagger with security definitions
-    swagger_config = {
-        "swagger": "2.0",
-        "title": "API Documentation",
-        "uiversion": 3,
-        "specs": [
-            {
-                "endpoint": "apispec_1",
-                "route": "/apispec_1.json"
-            }
-        ],
-        "securityDefinitions": {
-            "JWT": {
-                "type": "apiKey",
-                "name": "Authorization",
-                "in": "header",
-                "description": "Enter JWT token with 'Bearer <token>' format"
-            }
-        }
-    }
-    Swagger(app, template=swagger_config)
+    JWTManager(app)
 
-    # Register blueprints
-    app.register_blueprint(auth_bp, url_prefix='/api')
+    # Initialize Flask-RESTx with Swagger configuration
+    api = configure_swagger(app)
+
+    # Register namespaces
+    api.add_namespace(auth_ns, path='/api')
+    api.add_namespace(profile_ns, path='/api')
+    # Add other namespaces as needed
+    # api.add_namespace(learn_ns, path='/api')
+    # api.add_namespace(quiz_ns, path='/api')
 
     return app
 

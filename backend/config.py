@@ -9,9 +9,6 @@ class Config:
     """Base configuration"""
     DEBUG = False
     TESTING = False
-
-
-
     # Logging Configuration
     try:
         LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()

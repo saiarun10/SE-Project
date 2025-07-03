@@ -1,35 +1,59 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import store from '@/store';
-import Home from '@/components/Home.vue';
-import About from '@/components/About.vue';
-import ExpenseTracker from '../components/ExpenseTracker.vue';
-import ExpenseInterface from '../components/ExpenseInterface.vue';
-import AddExpense from '../components/AddExpense.vue';
-// import Login from '@/components/Login.vue';
-// import Signup from '@/components/Signup.vue';
-// import AdminDashboard from '@/components/AdminDashboard.vue';
-// import UserDashboard from '@/components/UserDashboard.vue';
+import HomeView from '../views/HomeView.vue';
+import AboutView from '../views/AboutView.vue'
+import ContactView from '../views/ContactView.vue'
+import AdminDashboard from '../views/AdminDashboard.vue';
+import UserDashboard from '../views/UserDashboard.vue';
+import LoginView from '../views/Login.vue';
+import SignupView from '../views/Signup.vue';
+import ProfileView from '../views/Profile.vue';
+import UserSummaryView from '../views/UserSummary.vue';
+import BuyPremiumView from '../views/BuyPremium.vue';
+import Lesson from '@/components/Lesson.vue';
+import Module from '@/components/Module.vue';
+import Topic from '@/components/Topic.vue';
+import store from '../store';
 
 const routes = [
-  { path: '/', component: Home, name: 'Home' },
-  { path: '/about', component: About, name: 'About' },
-  { path: '/expense_tracker', component: ExpenseTracker, name: 'ExpenseTracker' },
-  { path: '/expense_interface', component: ExpenseInterface, name: 'ExpenseInterface' },
-  { path: '/add_expense', component: AddExpense, name: 'AddExpense' },
-  // { path: '/login', component: Login, name: 'Login' },
-  // { path: '/signup', component: Signup, name: 'Signup' },
-  // {
-  //   path: '/admin-dashboard',
-  //   component: AdminDashboard,
-  //   meta: { requiresAuth: true, role: 'admin' },
-  //   name: 'AdminDashboard',
-  // },
-  // {
-  //   path: '/user-dashboard',
-  //   component: UserDashboard,
-  //   meta: { requiresAuth: true, role: 'user' },
-  //   name: 'UserDashboard',
-  // },
+  { path: '/', name: 'Home', component: HomeView },
+  { path: '/about', name: 'About', component: AboutView },
+  { path: '/contact', name: 'Contact', component: ContactView },
+  { path: '/login', name: 'Login', component: LoginView },
+  { path: '/signup', name: 'Signup', component: SignupView },
+  {
+    path: '/user-dashboard',
+    name: 'UserDashboard',
+    component: UserDashboard,
+    meta: { requiresAuth: true, role: 'user' },
+  },
+  {
+    path: '/admin-dashboard',
+    name: 'AdminDashboard',
+    component: AdminDashboard,
+    meta: { requiresAuth: true, role: 'admin' },
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfileView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/buy-premium',
+    name: 'BuyPremium',
+    component: BuyPremiumView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/user-summary',
+    name: 'UserSummary',
+    component: UserSummaryView,
+    meta: { requiresAuth: true, role: 'user' },
+  },
+  { path: '/lesson', component: Lesson, name: 'Lesson' },
+  { path: '/lesson/:id', component: Module, name: 'Module', props: true },
+  { path: '/lessons/:lessonId/:topicId/learn_topic',component: Topic,name: 'LearnTopic'},
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: HomeView },
 ];
 
 const router = createRouter({
@@ -37,33 +61,17 @@ const router = createRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   const isAuthenticated = store.state.access_token;
-//   const userRole = store.state.user.user_role || 'user';
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = store.getters.isAuthenticated;
+  const userRole = store.getters.userRole;
 
-//   // Prevent authenticated users from accessing public routes
-//   if (isAuthenticated && (to.name === 'Login' || to.name === 'Signup' || to.name === 'Home')) {
-//     const redirectPath = userRole === 'admin' ? '/admin-dashboard' : '/user-dashboard';
-//     if (to.path !== redirectPath) {
-//       next(redirectPath);
-//     } else {
-//       next();
-//     }
-//   }
-//   // Handle protected routes
-//   else if (to.meta.requiresAuth) {
-//     if (!isAuthenticated) {
-//       next({ path: '/login', query: { redirect: to.fullPath } });
-//     } else if (to.meta.role && to.meta.role !== userRole) {
-//       next(userRole === 'admin' ? '/admin-dashboard' : '/user-dashboard');
-//     } else {
-//       next();
-//     }
-//   }
-//   // Allow public routes
-//   else {
-//     next();
-//   }
-// });
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ name: 'Home' });
+  } else if (to.meta.role && to.meta.role !== userRole) {
+    next({ name: 'Home' });
+  } else {
+    next();
+  }
+});
 
 export default router;

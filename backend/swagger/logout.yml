@@ -1,9 +1,0 @@
-tags:
-  - Authentication
-security:
-  - JWT: []
-responses:
-  200:
-    description: Logout successful
-  401:
-    description: Unauthorized
