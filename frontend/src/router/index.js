@@ -13,6 +13,8 @@ import Lesson from '@/components/Lesson.vue';
 import Module from '@/components/Module.vue';
 import Topic from '@/components/Topic.vue';
 import store from '../store';
+import QuizView from '../views/QuizView.vue';
+import ExamInterface from '../views/ExamInterface.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
@@ -49,6 +51,18 @@ const routes = [
     name: 'UserSummary',
     component: UserSummaryView,
     meta: { requiresAuth: true, role: 'user' },
+  },
+  {
+    path: '/quiz',
+    name: 'Quiz',
+    component: QuizView,
+    meta: { requiresAuth: true ,role:'user' },
+  },
+  {
+    path: '/exam-interface',
+    name: 'ExamInterface',
+    component: ExamInterface,
+    meta: { requiresAuth: true, role:'user' },
   },
   { path: '/lesson', component: Lesson, name: 'Lesson' },
   { path: '/lesson/:id', component: Module, name: 'Module', props: true },
