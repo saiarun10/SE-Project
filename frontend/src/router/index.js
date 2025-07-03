@@ -64,7 +64,7 @@ const routes = [
     component: ExamInterface,
     meta: { requiresAuth: true, role:'user' },
   },
-    { path: '/user-dashboard',name: 'UserDashboard',component: UserDashboard,meta: { requiresAuth: true, role: 'user' },},
+  { path: '/user-dashboard',name: 'UserDashboard',component: UserDashboard,meta: { requiresAuth: true, role: 'user' },},
   { path: '/admin-dashboard',name: 'AdminDashboard',component: AdminDashboard,meta: { requiresAuth: true, role: 'admin' },},
   { path: '/profile',name: 'Profile',component: ProfileView,meta: { requiresAuth: true},},
   { path: '/buy-premium',name: 'BuyPremium', component: BuyPremiumView,meta: { requiresAuth: true, role: 'user' },},
