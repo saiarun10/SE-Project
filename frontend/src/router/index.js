@@ -9,6 +9,9 @@ import SignupView from '../views/Signup.vue';
 import ProfileView from '../views/Profile.vue';
 import UserSummaryView from '../views/UserSummary.vue';
 import BuyPremiumView from '../views/BuyPremium.vue';
+import Lesson from '@/components/Lesson.vue';
+import Module from '@/components/Module.vue';
+import Topic from '@/components/Topic.vue';
 import store from '../store';
 
 const routes = [
@@ -47,6 +50,9 @@ const routes = [
     component: UserSummaryView,
     meta: { requiresAuth: true, role: 'user' },
   },
+  { path: '/lesson', component: Lesson, name: 'Lesson' },
+  { path: '/lesson/:id', component: Module, name: 'Module', props: true },
+  { path: '/lessons/:lessonId/:topicId/learn_topic',component: Topic,name: 'LearnTopic'},
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: HomeView },
 ];
 
