@@ -24,25 +24,32 @@ INITIAL_ADMINS = [
     # }
 ]
 
-# Configuration for default lessons
+# Configuration for default lessons (name and description only)
 DEFAULT_LESSONS = [
     {
         "name": "Stock Market",
-        "description": "Learn the fundamentals of stock markets, including trading, investments, and market analysis."
+        "description": "Learn the basics of stock market investing and trading strategies."
     },
     {
-        "name": "Personal Finance",
-        "description": "Understand budgeting, saving, and managing personal finances effectively."
+        "name": "Banking Sector",
+        "description": "Understand banking services, loans, and financial institutions."
     },
     {
-        "name": "Investment Basics",
-        "description": "Explore different investment options like mutual funds, bonds, and real estate."
+        "name": "Budget",
+        "description": "Master personal budgeting and expense management techniques."
+    },
+    {
+        "name": "Tax",
+        "description": "Navigate tax planning, deductions, and filing requirements."
+    },
+    {
+        "name": "Credit & Interest",
+        "description": "Understand credit scores, interest rates, and loan management."
+    },
+    {
+        "name": "Financial Planning",
+        "description": "Develop comprehensive financial planning and investment strategies."
     }
-    # Add more lessons here in the future, e.g.:
-    # {
-    #     "name": "Cryptocurrency",
-    #     "description": "Introduction to cryptocurrencies and blockchain technology."
-    # }
 ]
 
 def add_initial_admins():

@@ -105,7 +105,7 @@ class Topic(db.Model):
     module_id = db.Column(db.Integer, db.ForeignKey('modules.module_id', ondelete='CASCADE'), nullable=False, index=True)
     created_by_admin_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='RESTRICT'), nullable=False)
     topic_title = db.Column(db.String(255), nullable=False)
-    topic_content = db.Column(db.LargeBinary, nullable=False)
+    topic_content = db.Column(db.LargeBinary, nullable=True)
     created_at = db.Column(db.DateTime, default=get_current_ist)
     updated_at = db.Column(db.DateTime, default=get_current_ist, onupdate=get_current_ist)
     deleted_at = db.Column(db.DateTime)
