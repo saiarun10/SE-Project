@@ -9,6 +9,10 @@ import SignupView from '../views/Signup.vue';
 import ProfileView from '../views/Profile.vue';
 import UserSummaryView from '../views/UserSummary.vue';
 import BuyPremiumView from '../views/BuyPremium.vue';
+import AddContent from '../views/AddContent.vue';
+import AddModule from '../views/AddModule.vue';
+import AddTopic from '../views/AddTopic.vue';
+import GenerateQuiz from '../views/GenerateQuiz.vue';
 import Lesson from '@/components/Lesson.vue';
 import Module from '@/components/Module.vue';
 import Topic from '@/components/Topic.vue';
@@ -20,36 +24,16 @@ const routes = [
   { path: '/contact', name: 'Contact', component: ContactView },
   { path: '/login', name: 'Login', component: LoginView },
   { path: '/signup', name: 'Signup', component: SignupView },
-  {
-    path: '/user-dashboard',
-    name: 'UserDashboard',
-    component: UserDashboard,
-    meta: { requiresAuth: true, role: 'user' },
-  },
-  {
-    path: '/admin-dashboard',
-    name: 'AdminDashboard',
-    component: AdminDashboard,
-    meta: { requiresAuth: true, role: 'admin' },
-  },
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: ProfileView,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/buy-premium',
-    name: 'BuyPremium',
-    component: BuyPremiumView,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/user-summary',
-    name: 'UserSummary',
-    component: UserSummaryView,
-    meta: { requiresAuth: true, role: 'user' },
-  },
+  { path: '/user-dashboard',name: 'UserDashboard',component: UserDashboard,meta: { requiresAuth: true, role: 'user' },},
+  { path: '/admin-dashboard',name: 'AdminDashboard',component: AdminDashboard,meta: { requiresAuth: true, role: 'admin' },},
+  { path: '/profile',name: 'Profile',component: ProfileView,meta: { requiresAuth: true},},
+  { path: '/buy-premium',name: 'BuyPremium', component: BuyPremiumView,meta: { requiresAuth: true, role: 'user' },},
+  { path: '/user-summary',name: 'UserSummary',component: UserSummaryView,meta: { requiresAuth: true, role: 'user' },},
+
+  { path: '/add-module', name: 'AddModule', component: AddModule, meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/add-topic', name: 'AddTopic', component: AddTopic, meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/add-content', name: 'AddContent', component: AddContent, meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/generate-quiz', name: 'GenerateQuiz', component: GenerateQuiz, meta: { requiresAuth: true, role: 'admin' } },
   { path: '/lesson', component: Lesson, name: 'Lesson' },
   { path: '/lesson/:id', component: Module, name: 'Module', props: true },
   { path: '/lessons/:lessonId/:topicId/learn_topic',component: Topic,name: 'LearnTopic'},
