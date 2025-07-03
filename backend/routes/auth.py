@@ -235,3 +235,35 @@ class Logout(Resource):
             db.session.rollback()
             print(f"Error during logout: {str(e)}")
             abort(500, f'An unexpected error occurred: {str(e)}')
+
+@auth_ns.route('/validate-token')
+class ValidateToken(Resource):
+    @auth_ns.doc('validate_token', description='Validate JWT token and return user details.', security='BearerAuth')
+    @jwt_required()
+    @auth_ns.marshal_with(user_model, code=200)
+    @auth_ns.response(401, 'Unauthorized: Missing or invalid token', error_model)
+    @auth_ns.response(404, 'User not found', error_model)
+    @auth_ns.response(500, 'Unexpected error', error_model)
+    def get(self):
+        """Validate JWT token and return user details."""
+        try:
+            user_id = get_jwt_identity()
+            user = User.query.filter_by(user_id=user_id).first()
+            if not user:
+                abort(404, 'User not found')
+
+            user_profile = UserProfile.query.filter_by(user_id=user.user_id).first()
+            parent_email = user_profile.parent_email if user_profile else None
+            is_premium_user = user_profile.is_premium_user if user_profile else False
+
+            return {
+                'user_id': user.user_id,
+                'email': user.email,
+                'username': user.username,
+                'user_role': user.user_role,
+                'parent_email': parent_email,
+                'is_premium_user': is_premium_user
+            }, 200
+
+        except Exception as e:
+            abort(500, f'An unexpected error occurred: {str(e)}')
