@@ -45,19 +45,19 @@ const routes = [
     path: '/expense-tracker',
     name: 'ExpenseTracker',
     component: ExpenseTrackerView,
-    meta: { requiresAuth: false },  //to make true later
+    meta: { requiresAuth: true ,role: 'user'}, 
   },
   {
     path: '/expense-interface',
     name: 'ExpenseInterface',
     component: ExpenseInterfaceView,
-    meta: { requiresAuth: false },  //to make true later
+    meta: { requiresAuth: true, role: 'user' }, 
   },
   {
     path: '/add_expense',
     name: 'AddExpense',
     component: AddExpenseView,
-    meta: { requiresAuth: false },  //to make true later
+    meta: { requiresAuth: true, role: 'user' }, 
   },
   {
     path: '/buy-premium',
