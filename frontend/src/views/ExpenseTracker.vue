@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div class="container mt-5" style="font-family: var(--bs-body-font-family);">
     <h2 class="text-center mb-4">Welcome Richie, Start Tracking your Expenses</h2>
 
@@ -30,26 +31,37 @@
       </div>
     </div>
   </div>
+<Footer/>
 </template>
 
 <script>
 import { ref } from 'vue';
+import Navbar from '@/components/Navbar.vue'
+import Footer from '@/components/Footer.vue'
+import { useRouter } from 'vue-router'
+
 
 export default {
   name: 'ExpenseTracker',
+  components: {
+    Navbar,
+    Footer
+  },
   setup() {
+    const router = useRouter()
     const passcode = ref('');
     const newPasscode = ref('');
     const passcodeStatus = ref(null); // null = not checked, true = exists, false = does not exist
-
+    const errorMessage={"value":""}
     const submitPasscode = async () => {
         try {
-            const response = await fetch('/api/submit_passcode', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ passcode: passcode.value })
-            });
-            const data = await response.json();
+            // const response = await fetch('/api/submit_passcode', {
+            // method: 'POST',
+            // headers: { 'Content-Type': 'application/json' },
+            // body: JSON.stringify({ passcode: passcode.value })
+            // });
+            // const data = await response.json();
+            const data = {"success":true}
 
             if (data.success === true) {
             router.push('/expense-interface'); // Adjust route name as defined in your router
@@ -64,8 +76,9 @@ export default {
 
     const checkPasscodeStatus = async () => {
       try {
-        const response = await fetch('/api/get_passcode_status');
-        const data = await response.json();
+        // const response = await fetch('/api/get_passcode_status');
+        // const data = await response.json();
+        const data={"exists":true}
         passcodeStatus.value = data.exists; // expects: { exists: true/false }
       } catch (err) {
         console.error('Status check error:', err);

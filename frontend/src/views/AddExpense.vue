@@ -1,4 +1,5 @@
 <template>
+ <Navbar /> 
   <div class="container mt-5" style="font-family: var(--bs-body-font-family); max-width: 600px;">
     <h2 class="fw-bold text-center mb-4">Add A New Expense</h2>
 
@@ -65,13 +66,20 @@
       <button type="submit" class="btn btn-primary w-100">Save</button>
     </form>
   </div>
+  <Footer />
 </template>
 
 <script>
 import { ref, watch } from 'vue';
-
+import Navbar from '@/components/Navbar.vue'
+import Footer from '@/components/Footer.vue'
 export default {
-  name: 'AddExpense',
+  name: 'AddExpense'
+  ,
+  components: {
+    Navbar,
+    Footer
+  },
   setup() {
     const selectedTab = ref('expense');
 

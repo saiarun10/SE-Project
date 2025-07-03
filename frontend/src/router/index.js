@@ -9,6 +9,9 @@ import SignupView from '../views/Signup.vue';
 import ProfileView from '../views/Profile.vue';
 import UserSummaryView from '../views/UserSummary.vue';
 import BuyPremiumView from '../views/BuyPremium.vue';
+import ExpenseTrackerView from '../views/ExpenseTracker.vue';
+import ExpenseInterfaceView from '../views/ExpenseInterface.vue';
+import AddExpenseView from '../views/AddExpense.vue';
 import Lesson from '@/components/Lesson.vue';
 import Module from '@/components/Module.vue';
 import Topic from '@/components/Topic.vue';
@@ -37,6 +40,24 @@ const routes = [
     name: 'Profile',
     component: ProfileView,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/expense-tracker',
+    name: 'ExpenseTracker',
+    component: ExpenseTrackerView,
+    meta: { requiresAuth: false },  //to make true later
+  },
+  {
+    path: '/expense-interface',
+    name: 'ExpenseInterface',
+    component: ExpenseInterfaceView,
+    meta: { requiresAuth: false },  //to make true later
+  },
+  {
+    path: '/add_expense',
+    name: 'AddExpense',
+    component: AddExpenseView,
+    meta: { requiresAuth: false },  //to make true later
   },
   {
     path: '/buy-premium',

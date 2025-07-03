@@ -1,6 +1,5 @@
-
-
 <template>
+  <Navbar />
   <div class="container mt-4" style="font-family: var(--bs-body-font-family);">
     <h2 class="text-center mb-4 fw-bold fs-3">Let's Look at your Expenses, Richie</h2>
 
@@ -105,11 +104,14 @@
     </div>
   </div>
   <router-link to="/add_expense" class="fab">
-  <span class="fs-1 text-white">+</span>
+  <span class="fs-1 text-white">+</span>  
 </router-link>
+<Footer/>
 </template>
 
 <script>
+import Navbar from '@/components/Navbar.vue'
+import Footer from '@/components/Footer.vue'
 import { ref, onMounted, computed, watch } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -118,6 +120,10 @@ Chart.register(...registerables, ChartDataLabels);
 
 export default {
   name: 'ExpenseInterface',
+  components: {
+    Navbar,
+    Footer
+  },
   setup() {
     const tabs = ['Daily', 'Monthly', 'Summary'];
     const selectedTab = ref('Daily');
@@ -134,79 +140,79 @@ export default {
 
     const fetchAllExpenses = async () => {
       try {
-        const res = await fetch(`/api/get_all_expense`);
-        const data = await res.json();
-//                 const data = {
-//   "expenses": [
-//     // January
-//     { "date": "2025-01-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
-//     { "date": "2025-01-10", "name": "Groceries", "category": "Household", "type": "expense", "amount": 3200 },
-//     { "date": "2025-01-18", "name": "Internet", "category": "Utilities", "type": "expense", "amount": 800 },
+        // const res = await fetch(`/api/get_all_expense`);
+        // const data = await res.json();
+                      const data = {
+        "expenses": [
+          // January
+          { "date": "2025-01-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
+          { "date": "2025-01-10", "name": "Groceries", "category": "Household", "type": "expense", "amount": 3200 },
+          { "date": "2025-01-18", "name": "Internet", "category": "Utilities", "type": "expense", "amount": 800 },
 
-//     // February
-//     { "date": "2025-02-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
-//     { "date": "2025-02-14", "name": "Dining", "category": "Food", "type": "expense", "amount": 1500 },
-//     { "date": "2025-02-25", "name": "Electricity", "category": "Utilities", "type": "expense", "amount": 1200 },
+          // February
+          { "date": "2025-02-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
+          { "date": "2025-02-14", "name": "Dining", "category": "Food", "type": "expense", "amount": 1500 },
+          { "date": "2025-02-25", "name": "Electricity", "category": "Utilities", "type": "expense", "amount": 1200 },
 
-//     // March
-//     { "date": "2025-03-03", "name": "Freelance", "category": "Side Hustle", "type": "income", "amount": 8000 },
-//     { "date": "2025-03-12", "name": "Shopping", "category": "Lifestyle", "type": "expense", "amount": 2500 },
-//     { "date": "2025-03-20", "name": "Petrol", "category": "Travel", "type": "expense", "amount": 1800 },
+          // March
+          { "date": "2025-03-03", "name": "Freelance", "category": "Side Hustle", "type": "income", "amount": 8000 },
+          { "date": "2025-03-12", "name": "Shopping", "category": "Lifestyle", "type": "expense", "amount": 2500 },
+          { "date": "2025-03-20", "name": "Petrol", "category": "Travel", "type": "expense", "amount": 1800 },
 
-//     // April
-//     { "date": "2025-04-01", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
-//     { "date": "2025-04-07", "name": "Gym", "category": "Health", "type": "expense", "amount": 1200 },
-//     { "date": "2025-04-15", "name": "Mobile Recharge", "category": "Utilities", "type": "expense", "amount": 500 },
+          // April
+          { "date": "2025-04-01", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
+          { "date": "2025-04-07", "name": "Gym", "category": "Health", "type": "expense", "amount": 1200 },
+          { "date": "2025-04-15", "name": "Mobile Recharge", "category": "Utilities", "type": "expense", "amount": 500 },
 
-//     // May
-//     { "date": "2025-05-01", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
-//     { "date": "2025-05-02", "name": "Groceries", "category": "Household", "type": "expense", "amount": 2200 },
-//     { "date": "2025-05-20", "name": "Medical Checkup", "category": "Health", "type": "expense", "amount": 2000 },
+          // May
+          { "date": "2025-05-01", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
+          { "date": "2025-05-02", "name": "Groceries", "category": "Household", "type": "expense", "amount": 2200 },
+          { "date": "2025-05-20", "name": "Medical Checkup", "category": "Health", "type": "expense", "amount": 2000 },
 
-//     // June
-//     { "date": "2025-06-05", "name": "Bonus", "category": "Job", "type": "income", "amount": 10000 },
-//     { "date": "2025-06-11", "name": "Movie", "category": "Entertainment", "type": "expense", "amount": 700 },
-//     { "date": "2025-06-24", "name": "Electricity", "category": "Utilities", "type": "expense", "amount": 1100 },
+          // June
+          { "date": "2025-06-05", "name": "Bonus", "category": "Job", "type": "income", "amount": 10000 },
+          { "date": "2025-06-11", "name": "Movie", "category": "Entertainment", "type": "expense", "amount": 700 },
+          { "date": "2025-06-24", "name": "Electricity", "category": "Utilities", "type": "expense", "amount": 1100 },
 
-//     // July
-//     { "date": "2025-07-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
-//     { "date": "2025-07-06", "name": "allowance", "category": "Job", "type": "income", "amount": 4000 },
-//     { "date": "2025-07-06", "name": "freelance", "category": "freelance", "type": "income", "amount": 10000 },
-//     { "date": "2025-07-07", "name": "profit", "category": "investment", "type": "income", "amount": 10000 },
-//     { "date": "2025-07-08", "name": "freelance", "category": "freelance", "type": "income", "amount": 5000 },
-//     { "date": "2025-07-05", "name": "mobile recharge", "category": "Bills", "type": "expense", "amount": 1000 },
-//     { "date": "2025-07-11", "name": "medicines", "category": "health", "type": "expense", "amount": 4000 },
-//     { "date": "2025-07-21", "name": "Travel", "category": "Vacation", "type": "expense", "amount": 15000 },
-//     { "date": "2025-07-22", "name": "stay", "category": "Vacation", "type": "expense", "amount": 5000 },
-//     { "date": "2025-07-24", "name": "gym", "category": "health", "type": "expense", "amount": 3000 },
-//     { "date": "2025-07-24", "name": "Dining Out", "category": "Food", "type": "expense", "amount": 1200 },
+          // July
+          { "date": "2025-07-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
+          { "date": "2025-07-06", "name": "allowance", "category": "Job", "type": "income", "amount": 4000 },
+          { "date": "2025-07-06", "name": "freelance", "category": "freelance", "type": "income", "amount": 10000 },
+          { "date": "2025-07-07", "name": "profit", "category": "investment", "type": "income", "amount": 10000 },
+          { "date": "2025-07-08", "name": "freelance", "category": "freelance", "type": "income", "amount": 5000 },
+          { "date": "2025-07-05", "name": "mobile recharge", "category": "Bills", "type": "expense", "amount": 1000 },
+          { "date": "2025-07-11", "name": "medicines", "category": "health", "type": "expense", "amount": 4000 },
+          { "date": "2025-07-21", "name": "Travel", "category": "Vacation", "type": "expense", "amount": 15000 },
+          { "date": "2025-07-22", "name": "stay", "category": "Vacation", "type": "expense", "amount": 5000 },
+          { "date": "2025-07-24", "name": "gym", "category": "health", "type": "expense", "amount": 3000 },
+          { "date": "2025-07-24", "name": "Dining Out", "category": "Food", "type": "expense", "amount": 1200 },
 
-//     // August
-//     { "date": "2025-08-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
-//     { "date": "2025-08-08", "name": "Books", "category": "Education", "type": "expense", "amount": 1500 },
-//     { "date": "2025-08-29", "name": "Online Course", "category": "Education", "type": "expense", "amount": 2500 },
+          // August
+          { "date": "2025-08-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
+          { "date": "2025-08-08", "name": "Books", "category": "Education", "type": "expense", "amount": 1500 },
+          { "date": "2025-08-29", "name": "Online Course", "category": "Education", "type": "expense", "amount": 2500 },
 
-//     // September
-//     { "date": "2025-09-01", "name": "Freelance", "category": "Side Hustle", "type": "income", "amount": 5000 },
-//     { "date": "2025-09-15", "name": "Gym", "category": "Health", "type": "expense", "amount": 1200 },
-//     { "date": "2025-09-30", "name": "Internet", "category": "Utilities", "type": "expense", "amount": 800 },
+          // September
+          { "date": "2025-09-01", "name": "Freelance", "category": "Side Hustle", "type": "income", "amount": 5000 },
+          { "date": "2025-09-15", "name": "Gym", "category": "Health", "type": "expense", "amount": 1200 },
+          { "date": "2025-09-30", "name": "Internet", "category": "Utilities", "type": "expense", "amount": 800 },
 
-//     // October
-//     { "date": "2025-10-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
-//     { "date": "2025-10-10", "name": "Rent", "category": "Housing", "type": "expense", "amount": 8000 },
-//     { "date": "2025-10-28", "name": "Snacks", "category": "Food", "type": "expense", "amount": 500 },
+          // October
+          { "date": "2025-10-05", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
+          { "date": "2025-10-10", "name": "Rent", "category": "Housing", "type": "expense", "amount": 8000 },
+          { "date": "2025-10-28", "name": "Snacks", "category": "Food", "type": "expense", "amount": 500 },
 
-//     // November
-//     { "date": "2025-11-05", "name": "Interest", "category": "Savings", "type": "income", "amount": 1000 },
-//     { "date": "2025-11-18", "name": "Laptop Repair", "category": "Electronics", "type": "expense", "amount": 3000 },
-//     { "date": "2025-11-25", "name": "Gifts", "category": "Misc", "type": "expense", "amount": 1000 },
+          // November
+          { "date": "2025-11-05", "name": "Interest", "category": "Savings", "type": "income", "amount": 1000 },
+          { "date": "2025-11-18", "name": "Laptop Repair", "category": "Electronics", "type": "expense", "amount": 3000 },
+          { "date": "2025-11-25", "name": "Gifts", "category": "Misc", "type": "expense", "amount": 1000 },
 
-//     // December
-//     { "date": "2025-12-01", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
-//     { "date": "2025-12-15", "name": "Christmas Shopping", "category": "Lifestyle", "type": "expense", "amount": 4000 },
-//     { "date": "2025-12-24", "name": "Dining Out", "category": "Food", "type": "expense", "amount": 2000 }
-//   ]
-// }
+          // December
+          { "date": "2025-12-01", "name": "Salary", "category": "Job", "type": "income", "amount": 30000 },
+          { "date": "2025-12-15", "name": "Christmas Shopping", "category": "Lifestyle", "type": "expense", "amount": 4000 },
+          { "date": "2025-12-24", "name": "Dining Out", "category": "Food", "type": "expense", "amount": 2000 }
+        ]
+      }
 ;
         allTransactions.value = data.expenses || [];
         groupMonthlyData();
