@@ -145,20 +145,12 @@
 <script>
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
-<<<<<<< HEAD:frontend/src/components/Module.vue
-// import Calculator from '@/components/Calculator.vue'
-=======
->>>>>>> main:frontend/src/views/Module.vue
 
 export default {
   name: 'Module',
   components: {
     Navbar,
     Footer,
-<<<<<<< HEAD:frontend/src/components/Module.vue
-    // Calculator
-=======
->>>>>>> main:frontend/src/views/Module.vue
   },
   props: ['id'],
   
