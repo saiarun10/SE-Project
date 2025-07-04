@@ -31,13 +31,13 @@
       </div>
     </div>
   </div>
-<Footer/>
+<AppFooter/>
 </template>
 
 <script>
 import { ref } from 'vue';
 import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
+import AppFooter from '@/components/Footer.vue'
 import { useRouter } from 'vue-router'
 
 
@@ -45,7 +45,7 @@ export default {
   name: 'ExpenseTracker',
   components: {
     Navbar,
-    Footer
+    AppFooter
   },
   setup() {
     const router = useRouter()

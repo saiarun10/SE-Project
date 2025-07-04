@@ -144,13 +144,13 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
+import AppFooter from '@/components/Footer.vue'
 
 export default {
   name: 'Module',
   components: {
     Navbar,
-    Footer,
+    AppFooter,
   },
   props: ['id'],
   

@@ -16,18 +16,18 @@
 
     <div v-else class="error-message">PDF not available.</div>
   </div>
-  <Footer />
+  <AppFooter />
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
+import AppFooter from '@/components/Footer.vue'
 
 export default {
   name: 'Topic',
   components: {
     Navbar,
-    Footer
+    AppFooter
   }, 
   data() {
     return {

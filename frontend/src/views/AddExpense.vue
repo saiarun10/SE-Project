@@ -66,19 +66,19 @@
       <button type="submit" class="btn btn-primary w-100">Save</button>
     </form>
   </div>
-  <Footer />
+  <AppFooter />
 </template>
 
 <script>
 import { ref, watch } from 'vue';
 import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
+import AppFooter from '@/components/Footer.vue'
 export default {
   name: 'AddExpense'
   ,
   components: {
     Navbar,
-    Footer
+    AppFooter
   },
   setup() {
     const selectedTab = ref('expense');

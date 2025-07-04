@@ -41,18 +41,18 @@
     </div>
     
   </div>
-  <Footer />
+  <AppFooter />
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
+import AppFooter from '@/components/Footer.vue'
 
 export default {
   name: 'Lesson',
   components: {
     Navbar,
-    Footer
+    AppFooter
   }, 
   
   data() {

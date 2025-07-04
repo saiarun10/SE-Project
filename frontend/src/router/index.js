@@ -17,6 +17,9 @@ import Lesson from '../views/Lesson.vue';
 import Module from '../views/Module.vue';
 import Topic from '../views/Topic.vue';
 import Awareness from '../views/Awareness.vue';
+import AddExpense from '../views/AddExpense.vue';
+import ExpenseInterface from '../views/ExpenseInterface.vue';
+import ExpenseTracker from '../views/ExpenseTracker.vue';
 import store from '../store';
 
 const routes = [
@@ -38,7 +41,9 @@ const routes = [
   { path: '/lesson/:id',name: 'Module',  component: Module, meta: { requiresAuth: true, role: 'user' }, props: true },
   { path: '/lessons/:lessonId/:topicId/learn_topic',name: 'LearnTopic', component: Topic, meta: { requiresAuth: true, role: 'user' }, props: true },
   { path: '/awareness', name: 'Awareness', component: Awareness, meta: { requiresAuth: true, role: 'user' } },
-
+  { path: '/add-expense', name: 'AddExpense', component: AddExpense, meta: { requiresAuth: true, role: 'user' } },
+  { path: '/expense-interface', name: 'ExpenseInterface', component: ExpenseInterface, meta: { requiresAuth: true, role: 'user' } },
+  { path: '/expense-tracker', name: 'ExpenseTracker', component: ExpenseTracker, meta: { requiresAuth: true, role: 'user' } },
 
   { path: '/add-module', name: 'AddModule', component: AddModule, meta: { requiresAuth: true, role: 'admin' } },
   { path: '/add-topic', name: 'AddTopic', component: AddTopic, meta: { requiresAuth: true, role: 'admin' } },

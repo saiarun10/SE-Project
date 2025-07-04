@@ -106,12 +106,12 @@
   <router-link to="/add_expense" class="fab">
   <span class="fs-1 text-white">+</span>  
 </router-link>
-<Footer/>
+<AppFooter/>
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
+import AppFooter from '@/components/Footer.vue'
 import { ref, onMounted, computed, watch } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -122,7 +122,7 @@ export default {
   name: 'ExpenseInterface',
   components: {
     Navbar,
-    Footer
+    AppFooter
   },
   setup() {
     const tabs = ['Daily', 'Monthly', 'Summary'];
