@@ -1,5 +1,6 @@
 <template>
-    <Navbar />
+  <Navbar />
+
   <div class="container mt-4" v-if="questions.length">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4 px-2">
@@ -9,14 +10,12 @@
 
     <!-- Question Display -->
     <div class="quiz-box mx-auto p-5 shadow rounded bg-white">
-      <h5 class="mb-4 fw-bold text-center">Q{{ currentIndex + 1 }}. {{ currentQuestion.question_content }}</h5>
+      <h5 class="mb-4 fw-bold text-center">
+        Q{{ currentIndex + 1 }}. {{ currentQuestion.question_text }}
+      </h5>
 
       <div class="row g-3 justify-content-center">
-        <div
-          class="col-md-6"
-          v-for="n in 4"
-          :key="n"
-        >
+        <div class="col-md-6" v-for="n in 4" :key="n">
           <div
             class="form-check option-pill"
             :class="{ selected: answers[currentQuestion.question_id] === n }"
@@ -33,7 +32,7 @@
               class="form-check-label w-100 text-center"
               :for="'option' + n"
             >
-              {{ currentQuestion['question_option' + n] }}
+              {{ currentQuestion['option' + n] }}
             </label>
           </div>
         </div>
@@ -69,25 +68,22 @@
   </div>
 
   <div v-else class="text-center mt-5">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <p class="mt-3">Loading questions...</p>
+    <div class="text-danger fs-4 fw-semibold">No questions available for this quiz.</div>
   </div>
+
   <Footer />
 </template>
-
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-import axios from 'axios';
 
 const route = useRoute();
-// const quizData = ref(route.state?.quiz);
-const questions = ref([]);
+
+const questions = ref(route.state?.questions ?? []);
+const duration = ref(route.state?.duration_minutes ?? 120); 
 const quizId = ref(null);
 const maxScore = ref(0);
 const timeLeft = ref(0);
@@ -95,61 +91,16 @@ const timerInterval = ref(null);
 
 const currentIndex = ref(0);
 const answers = ref({});
-const quizData = {"value":
-  {quiz_id: "sample_quiz_001",
-  time_limit: 90,  // in seconds
-  max_score: 10,
-  questions: [
-    {
-      question_id: 1,
-      question_content: "What is the capital of France?",
-      question_option1: "Berlin",
-      question_option2: "Madrid",
-      question_option3: "Paris",
-      question_option4: "Rome"
-    },
-    {
-      question_id: 2,
-      question_content: "Which planet is known as the Red Planet?",
-      question_option1: "Earth",
-      question_option2: "Mars",
-      question_option3: "Jupiter",
-      question_option4: "Saturn"
-    },
-    {
-      question_id: 3,
-      question_content: "What is the boiling point of water?",
-      question_option1: "90°C",
-      question_option2: "100°C",
-      question_option3: "120°C",
-      question_option4: "80°C"
-    }
-  ]
-}};
-
-onMounted(() => {
-  if (!quizData.value) {
-    alert('No quiz data found. Please restart the quiz.');
-    return;
-  }
-
-  localStorage.setItem('quizData', JSON.stringify(quizData.value)); // Optional fallback
-
-  quizId.value = quizData.value.quiz_id;
-  questions.value = quizData.value.questions;
-  maxScore.value = quizData.value.max_score;
-  timeLeft.value = quizData.value.time_limit;
-
-  startTimer();
-});
 
 const currentQuestion = computed(() => questions.value[currentIndex.value]);
+
 
 const formattedTime = computed(() => {
   const min = String(Math.floor(timeLeft.value / 60)).padStart(2, '0');
   const sec = String(timeLeft.value % 60).padStart(2, '0');
   return `${min}:${sec}`;
 });
+
 
 const startTimer = () => {
   timerInterval.value = setInterval(() => {
@@ -160,6 +111,17 @@ const startTimer = () => {
     }
   }, 1000);
 };
+
+
+onMounted(() => {
+  if (!questions.value.length) return;
+
+  quizId.value = questions.value[0]?.quiz_id ?? null;
+  maxScore.value = questions.value.reduce((sum, q) => sum + (q.score_points || 0), 0);
+  timeLeft.value = duration.value;
+  startTimer();
+});
+
 
 const nextQuestion = () => {
   if (currentIndex.value < questions.value.length - 1) {
@@ -173,6 +135,7 @@ const prevQuestion = () => {
   }
 };
 
+
 const submitQuiz = async () => {
   clearInterval(timerInterval.value);
 
@@ -185,9 +148,7 @@ const submitQuiz = async () => {
   };
 
   try {
-    // const result = await axios.post('/api/evaluate_quiz', payload);
-    console.log(payload)
-    const result={"data":{"score":50}}
+    const result = await axios.post('/api/evaluate_quiz', payload);
     alert('Quiz Submitted Successfully!\nScore: ' + result.data.score);
   } catch (error) {
     alert('Error submitting quiz');
@@ -195,7 +156,6 @@ const submitQuiz = async () => {
   }
 };
 </script>
-
 
 <style scoped>
 .quiz-box {
@@ -233,4 +193,3 @@ const submitQuiz = async () => {
   border-radius: 30px;
 }
 </style>
-

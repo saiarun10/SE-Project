@@ -18,7 +18,7 @@
         <select class="form-select" v-model="selectedModuleId" @change="onModuleChange" :disabled="!filteredModules.length">
           <option disabled value="">Select</option>
           <option v-for="mod in filteredModules" :key="mod.module_id" :value="mod.module_id">
-            {{ mod.module_name }}
+            {{ mod.module_title }}
           </option>
         </select>
       </div>
@@ -29,13 +29,13 @@
         <select class="form-select" v-model="selectedTopicId" :disabled="!filteredTopics.length">
           <option disabled value="">Select</option>
           <option v-for="topic in filteredTopics" :key="topic.topic_id" :value="topic.topic_id">
-            {{ topic.topic_name }}
+            {{ topic.topic_title }}
           </option>
         </select>
       </div>
 
       <!-- Submit -->
-      <button class="btn btn-primary" @click="startQuiz" :disabled="!selectedTopicId">Start Quiz</button>
+      <button class="btn btn-primary" @click="showQuiz" :disabled="!selectedTopicId">Show Quiz</button>
     </div>
   </div>
 </template>
@@ -66,44 +66,44 @@ export default {
     });
 
 
+//     const fetchInitialData = async () => {
+//   // Replace API calls with static dummy data
+//   lessons.value = [
+//     { lesson_id: 1, lesson_name: 'Mathematics' },
+//     { lesson_id: 2, lesson_name: 'Science' }
+//   ];
+
+//   modules.value = [
+//     { module_id: 1, lesson_id: 1, module_name: 'Algebra' },
+//     { module_id: 2, lesson_id: 1, module_name: 'Geometry' },
+//     { module_id: 3, lesson_id: 2, module_name: 'Physics' },
+//     { module_id: 4, lesson_id: 2, module_name: 'Chemistry' }
+//   ];
+
+//   topics.value = [
+//     { topic_id: 1, module_id: 1, topic_name: 'Quadratic Equations' },
+//     { topic_id: 2, module_id: 1, topic_name: 'Linear Equations' },
+//     { topic_id: 3, module_id: 2, topic_name: 'Triangles' },
+//     { topic_id: 4, module_id: 3, topic_name: 'Laws of Motion' },
+//     { topic_id: 5, module_id: 4, topic_name: 'Acids and Bases' }
+//   ];
+// };
+
     const fetchInitialData = async () => {
-  // Replace API calls with static dummy data
-  lessons.value = [
-    { lesson_id: 1, lesson_name: 'Mathematics' },
-    { lesson_id: 2, lesson_name: 'Science' }
-  ];
+      try {
+        const [lessonsRes, modulesRes, topicsRes] = await Promise.all([
+          fetch('/get_all_lessons'),
+          fetch('/get_all_modules'),
+          fetch('/get_all_topics'),
+        ]);
 
-  modules.value = [
-    { module_id: 1, lesson_id: 1, module_name: 'Algebra' },
-    { module_id: 2, lesson_id: 1, module_name: 'Geometry' },
-    { module_id: 3, lesson_id: 2, module_name: 'Physics' },
-    { module_id: 4, lesson_id: 2, module_name: 'Chemistry' }
-  ];
-
-  topics.value = [
-    { topic_id: 1, module_id: 1, topic_name: 'Quadratic Equations' },
-    { topic_id: 2, module_id: 1, topic_name: 'Linear Equations' },
-    { topic_id: 3, module_id: 2, topic_name: 'Triangles' },
-    { topic_id: 4, module_id: 3, topic_name: 'Laws of Motion' },
-    { topic_id: 5, module_id: 4, topic_name: 'Acids and Bases' }
-  ];
-};
-
-    // const fetchInitialData = async () => {
-    //   try {
-    //     const [lessonsRes, modulesRes, topicsRes] = await Promise.all([
-    //       fetch('/api/get_lessons'),
-    //       fetch('/api/get_modules'),
-    //       fetch('/api/get_topics'),
-    //     ]);
-
-    //     lessons.value = await lessonsRes.json();
-    //     modules.value = await modulesRes.json();
-    //     topics.value = await topicsRes.json();
-    //   } catch (err) {
-    //     console.error('Error fetching quiz data:', err);
-    //   }
-    // };
+        lessons.value = await lessonsRes.json();
+        modules.value = await modulesRes.json();
+        topics.value = await topicsRes.json();
+      } catch (err) {
+        console.error('Error fetching quiz data:', err);
+      }
+    };
 
     const onLessonChange = () => {
       selectedModuleId.value = '';
@@ -113,23 +113,19 @@ export default {
     const onModuleChange = () => {
       selectedTopicId.value = '';
     };
-    const startQuiz = async () => {
-    const selectedTopic = topics.value.find(t => t.topic_id === selectedTopicId.value);
-    alert(`Quiz starting for topic: ${selectedTopic?.topic_name || 'Unknown'} (ID: ${selectedTopicId.value})`);
+
+    const showQuiz = async () => {
+      try {
+            const response = await axios.get(`${lesson_id}/module/${module_id}/topic/${topic_id}/quizzes`);
+            router.push({
+            name: 'QuizView',
+            state: { quiz: response.data }
+            });
+
+      } catch (err) {
+        console.error('Failed to load quiz:', err);
+      }
     };
-
-    // const startQuiz = async () => {
-    //   try {
-            // const response = await axios.get(`/api/get_quiz/${topic_id}`);
-            // router.push({
-            // name: 'ExamInterface',
-            // state: { quiz: response.data.quiz_data }
-            // });
-
-    //   } catch (err) {
-    //     console.error('Failed to load quiz:', err);
-    //   }
-    // };
 
     onMounted(() => {
       fetchInitialData();
@@ -146,7 +142,7 @@ export default {
       filteredTopics,
       onLessonChange,
       onModuleChange,
-      startQuiz
+      showQuiz
     };
   }
 };

@@ -263,7 +263,7 @@ class DeleteQuiz(Resource):
             db.session.rollback()
             abort(500, f'An unexpected error occurred: {str(e)}')
 
-@quiz_ns.route('/<int:lesson_id>/module/<int:module_id>/topic/quizzes/<int:quiz_id>/questions')
+@quiz_ns.route('/module/<int:module_id>/topic/<int:topic_id>/quizzes/<int:quiz_id>/questions')
 class QuestionsByQuiz(Resource):
     @quiz_ns.doc('get_questions_by_quiz', description='Retrieve all questions for a specific quiz.', security='BearerAuth')
     @jwt_required()
