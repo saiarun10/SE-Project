@@ -6,6 +6,10 @@ from model import db
 from api_utils import CustomJSONProvider
 from routes.auth import auth_ns
 from routes.profile import profile_ns
+from routes.lesson import lesson_ns
+from routes.module import module_ns
+from routes.topic import topic_ns
+from routes.quiz import quiz_ns
 from swagger_setup import configure_swagger  # Import Swagger configuration
 # Import other namespaces as needed
 # from routes.learn import learn_ns
@@ -35,6 +39,10 @@ def create_app():
     # Register namespaces
     api.add_namespace(auth_ns, path='/api')
     api.add_namespace(profile_ns, path='/api')
+    api.add_namespace(lesson_ns, path='/api')
+    api.add_namespace(module_ns, path='/api')
+    api.add_namespace(topic_ns, path='/api')
+    api.add_namespace(quiz_ns, path='/api')
     # Add other namespaces as needed
     # api.add_namespace(learn_ns, path='/api')
     # api.add_namespace(quiz_ns, path='/api')
