@@ -145,14 +145,12 @@
 <script>
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
-// import Calculator from '@/components/Calculator.vue'
 
 export default {
   name: 'Module',
   components: {
     Navbar,
     Footer,
-    // Calculator
   },
   props: ['id'],
   
