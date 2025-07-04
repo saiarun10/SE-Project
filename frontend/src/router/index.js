@@ -16,6 +16,7 @@ import GenerateQuiz from '../views/GenerateQuiz.vue';
 import Lesson from '../views/Lesson.vue';
 import Module from '../views/Module.vue';
 import Topic from '../views/Topic.vue';
+import Awareness from '../views/Awareness.vue';
 import store from '../store';
 
 const routes = [
@@ -33,11 +34,10 @@ const routes = [
   { path: '/profile',name: 'Profile',component: ProfileView,meta: { requiresAuth: true},},
   { path: '/buy-premium',name: 'BuyPremium', component: BuyPremiumView,meta: { requiresAuth: true, role: 'user' },},
   { path: '/user-summary',name: 'UserSummary',component: UserSummaryView,meta: { requiresAuth: true, role: 'user' },},
-  { path: '/learn',  name: 'Lesson', component: Lesson, meta: { requiresAuth: true, role: 'user' }},
   { path: '/lesson',  name: 'Lesson', component: Lesson, meta: { requiresAuth: true, role: 'user' }},
   { path: '/lesson/:id',name: 'Module',  component: Module, meta: { requiresAuth: true, role: 'user' }, props: true },
   { path: '/lessons/:lessonId/:topicId/learn_topic',name: 'LearnTopic', component: Topic, meta: { requiresAuth: true, role: 'user' }, props: true },
-
+  { path: '/awareness', name: 'Awareness', component: Awareness, meta: { requiresAuth: true, role: 'user' } },
 
 
   { path: '/add-module', name: 'AddModule', component: AddModule, meta: { requiresAuth: true, role: 'admin' } },
