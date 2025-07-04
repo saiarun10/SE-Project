@@ -21,6 +21,8 @@ import AddExpense from '../views/AddExpense.vue';
 import ExpenseInterface from '../views/ExpenseInterface.vue';
 import ExpenseTracker from '../views/ExpenseTracker.vue';
 import store from '../store';
+import QuizView from '../views/QuizView.vue';
+import ExamInterface from '../views/ExamInterface.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
