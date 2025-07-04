@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       dashboardItems: [
-        { route: '/learn', image: learnImg, text: 'Learn', alt: 'Learn Section' },
+        { route: '/lesson', image: learnImg, text: 'Learn', alt: 'Learn Section' },
         { route: '/login', image: quizImg, text: 'Quiz', alt: 'Quiz Section' },
         { route: '/login', image: expensesImg, text: 'Record Expenses', alt: 'Expenses Section' },
         { route: '/awareness', image: awarenessImg, text: 'Awareness', alt: 'Awareness Section' },
