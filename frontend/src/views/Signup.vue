@@ -103,7 +103,7 @@
                     />
                     <div v-if="errors.birth_date" class="text-danger small mt-2">{{ errors.birth_date }}</div>
                     <p v-if="age !== null" class="small text-muted mt-2" style="font-size: 1rem;">
-                      Age: {{ age }} {{ age === 1 ? 'year' : 'years' }} (calculated on frontend)
+                      Age: {{ age }} {{ age === 1 ? 'year' : 'years' }} 
                     </p>
                   </div>
                 </div>
