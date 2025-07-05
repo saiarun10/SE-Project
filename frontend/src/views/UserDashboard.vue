@@ -48,7 +48,7 @@ export default {
       dashboardItems: [
         { route: '/lesson', image: learnImg, text: 'Learn', alt: 'Learn Section' },
         { route: '/quiz', image: quizImg, text: 'Quiz', alt: 'Quiz Section' },
-        { route: '/add-expense', image: expensesImg, text: 'Record Expenses', alt: 'Expenses Section' },
+        { route: '/expense-tracker', image: expensesImg, text: 'Record Expenses', alt: 'Expenses Section' },
         { route: '/awareness', image: awarenessImg, text: 'Awareness', alt: 'Awareness Section' },
         { route: '/calculator', image: calculatorImg, text: 'Calculate', alt: 'Calculator Section' },
         { route: '/chatbot', image: askImg, text: 'Ask a Question', alt: 'Question Section' },

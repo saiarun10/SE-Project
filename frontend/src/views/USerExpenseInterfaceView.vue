@@ -103,7 +103,7 @@
       </div>
     </div>
   </div>
-  <router-link to="/add_expense" class="fab">
+  <router-link to="/add-expense" class="fab">
   <span class="fs-1 text-white">+</span>  
 </router-link>
 <AppFooter/>
