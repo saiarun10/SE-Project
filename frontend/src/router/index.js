@@ -24,6 +24,11 @@ import store from '../store';
 import UserQuizView from '../views/UserQuizView.vue';
 import ExamInterface from '../views/UserExamInterface.vue';
 import ChatBotPage from '../views/ChatBotPage.vue';
+import Calculator from '../views/CalculatorView.vue'
+import RegularCalculator from '../views/RegularCalculatorView.vue'
+import CustomCalculatorInterest from '../views/CustomCalculatorInterestView.vue'
+import CustomCalculatorLoancompare from '../views/CustomCalculatorLoancompareView.vue'
+
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: HomeView },
@@ -49,6 +54,13 @@ const routes = [
   { path: '/quiz', name: 'UserQuizView', component: UserQuizView, meta: { requiresAuth: true, role: 'user' }},
   { path: '/exam/:quizId/:accessToken', name: 'UserExamInterface', component: ExamInterface, meta: { requiresAuth: true, role: 'user' } },
   { path: '/chatbot', name: 'ChatBotPage', component: ChatBotPage, meta: { requiresAuth: true, role: 'user' } },
+  { path: '/calculator', name: 'Calculator', component: Calculator, meta: { requiresAuth: true, role: 'user' } }, 
+  { path: '/regular-calculator', name: 'RegularCalculator', component: RegularCalculator, meta: { requiresAuth: true, role: 'user' } },   
+  { path: '/custom-calculator-interest', name: 'CustomCalculatorInterest', component: CustomCalculatorInterest, meta: { requiresAuth: true, role: 'user' } }, 
+  { path: '/custom-calculator-loancompare', name: 'CustomCalculatorLoancompare', component: CustomCalculatorLoancompare, meta: { requiresAuth: true, role: 'user' } },    
+  
+
+
 
   { path: '/add-module', name: 'AddModule', component: AddModule, meta: { requiresAuth: true, role: 'admin' } },
   { path: '/add-topic', name: 'AddTopic', component: AddTopic, meta: { requiresAuth: true, role: 'admin' } },
