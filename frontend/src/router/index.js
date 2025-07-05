@@ -8,22 +8,22 @@ import LoginView from '../views/Login.vue';
 import SignupView from '../views/Signup.vue';
 import ProfileView from '../views/Profile.vue';
 import UserSummaryView from '../views/UserSummary.vue';
-import BuyPremiumView from '../views/BuyPremium.vue';
-import AddContent from '../views/AddContent.vue';
-import AddModule from '../views/AddModule.vue';
-import AddTopic from '../views/AddTopic.vue';
-import GenerateQuiz from '../views/GenerateQuiz.vue';
-import Lesson from '../views/Lesson.vue';
-import Module from '../views/Module.vue';
-import Topic from '../views/Topic.vue';
-import Awareness from '../views/Awareness.vue';
-import AddExpense from '../views/AddExpense.vue';
-import ExpenseInterface from '../views/ExpenseInterface.vue';
-import ExpenseTracker from '../views/ExpenseTracker.vue';
+import BuyPremiumView from '../views/UserBuyPremiumView.vue';
+import AddContent from '../views/AddContentView.vue';
+import AddModule from '../views/AddModuleView.vue';
+import AddTopic from '../views/AddTopicView.vue';
+import GenerateQuiz from '../views/GenerateQuizView.vue';
+import Lesson from '../views/UserLessonView.vue';
+import Module from '../views/UserModuleView.vue';
+import Topic from '../views/UserTopicView.vue';
+import Awareness from '../views/UserAwarenessView.vue';
+import AddExpense from '../views/UserAddExpenseView.vue';
+import ExpenseInterface from '../views/USerExpenseInterfaceView.vue';
+import ExpenseTracker from '../views/UserExpenseTrackerView.vue';
 import store from '../store';
-import QuizView from '../views/QuizView.vue';
-import ExamInterface from '../views/ExamInterface.vue';
-
+import UserQuizView from '../views/UserQuizView.vue';
+import ExamInterface from '../views/UserExamInterface.vue';
+import ChatBotPage from '../views/ChatBotPage.vue';
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: HomeView },
@@ -46,6 +46,9 @@ const routes = [
   { path: '/add-expense', name: 'AddExpense', component: AddExpense, meta: { requiresAuth: true, role: 'user' } },
   { path: '/expense-interface', name: 'ExpenseInterface', component: ExpenseInterface, meta: { requiresAuth: true, role: 'user' } },
   { path: '/expense-tracker', name: 'ExpenseTracker', component: ExpenseTracker, meta: { requiresAuth: true, role: 'user' } },
+  { path: '/quiz', name: 'UserQuizView', component: UserQuizView, meta: { requiresAuth: true, role: 'user' }},
+  { path: '/exam/:quizId/:accessToken', name: 'UserExamInterface', component: ExamInterface, meta: { requiresAuth: true, role: 'user' } },
+  { path: '/chatbot', name: 'ChatBotPage', component: ChatBotPage, meta: { requiresAuth: true, role: 'user' } },
 
   { path: '/add-module', name: 'AddModule', component: AddModule, meta: { requiresAuth: true, role: 'admin' } },
   { path: '/add-topic', name: 'AddTopic', component: AddTopic, meta: { requiresAuth: true, role: 'admin' } },
