@@ -1,0 +1,284 @@
+@startuml classes_Diagram
+set namespaceSeparator none
+class "ChatbotMessage" as model.ChatbotMessage {
+  chat_id
+  message_content
+  message_type
+  sent_at
+  session_id
+  user_id
+}
+class "CreateModule" as routes.module.CreateModule {
+  post(lesson_id)
+}
+class "CreateQuestion" as routes.quiz.CreateQuestion {
+  post(lesson_id, module_id, topic_id, quiz_id)
+}
+class "CreateQuiz" as routes.quiz.CreateQuiz {
+  post(lesson_id, module_id, topic_id)
+}
+class "CreateTopic" as routes.topic.CreateTopic {
+  post(lesson_id, module_id)
+}
+class "DeleteModule" as routes.module.DeleteModule {
+  delete(lesson_id, module_id)
+}
+class "DeleteQuestion" as routes.quiz.DeleteQuestion {
+  delete(lesson_id, module_id, topic_id, quiz_id, question_id)
+}
+class "DeleteQuiz" as routes.quiz.DeleteQuiz {
+  delete(lesson_id, module_id, topic_id, quiz_id)
+}
+class "DeleteTopic" as routes.topic.DeleteTopic {
+  delete(lesson_id, module_id, topic_id)
+}
+class "DownloadContent" as routes.topic.DownloadContent {
+  get(lesson_id, module_id, topic_id)
+}
+class "EvaluateQuiz" as routes.quiz.EvaluateQuiz {
+  post()
+}
+class "Lesson" as model.Lesson {
+  created_at
+  lesson_description
+  lesson_id
+  lesson_name
+  modules
+  updated_at
+}
+class "Lessons" as routes.lesson.Lessons {
+  get()
+}
+class "Login" as routes.auth.Login {
+  post()
+}
+class "Logout" as routes.auth.Logout {
+  post()
+}
+class "Module" as model.Module {
+  created_at
+  created_by_admin_id
+  deleted_at
+  lesson_id
+  module_description
+  module_id
+  module_title
+  quizzes
+  topics
+  updated_at
+}
+class "Modules" as routes.module.Modules {
+  get()
+}
+class "ModulesByLesson" as routes.module.ModulesByLesson {
+  get(lesson_id)
+}
+class "ParentEmail" as routes.profile.ParentEmail {
+  post()
+}
+class "PremiumStatus" as routes.profile.PremiumStatus {
+  get()
+}
+class "Profile" as routes.profile.Profile {
+  get()
+  put()
+}
+class "Question" as model.Question {
+  correct_answer
+  created_at
+  created_by_admin_id
+  deleted_at
+  option1
+  option2
+  option3
+  option4
+  question_attempts
+  question_id
+  question_text
+  quiz_id
+  score_points
+  updated_at
+}
+class "QuestionAttempt" as model.QuestionAttempt {
+  attempt_id
+  attempted_at
+  is_correct
+  question_attempt_id
+  question_id
+  selected_answer
+  user_id
+}
+class "QuestionsByQuiz" as routes.quiz.QuestionsByQuiz {
+  get(lesson_id, module_id, topic_id, quiz_id)
+}
+class "Quiz" as model.Quiz {
+  created_at
+  created_by_admin_id
+  deleted_at
+  duration_minutes
+  is_visible
+  module_id
+  questions
+  quiz_attempts
+  quiz_id
+  quiz_title
+  topic_id
+  updated_at
+}
+class "QuizAttempt" as model.QuizAttempt {
+  attempt_id
+  attempted_questions
+  completed_at
+  correct_answers
+  incorrect_answers
+  question_attempts
+  quiz_attempt_access_token
+  quiz_id
+  score_earned
+  skipped_questions
+  started_at
+  time_taken_seconds
+  total_questions
+  total_score_possible
+  user_id
+}
+class "QuizzesByTopic" as routes.quiz.QuizzesByTopic {
+  get(lesson_id, module_id, topic_id)
+}
+class "SaveAnswer" as routes.quiz.SaveAnswer {
+  post()
+}
+class "Sessions" as routes.profile.Sessions {
+  get()
+}
+class "Signup" as routes.auth.Signup {
+  post()
+}
+class "StartQuiz" as routes.quiz.StartQuiz {
+  post()
+}
+class "Story" as model.Story {
+  created_at
+  created_by_admin_id
+  deleted_at
+  interactions
+  is_visible
+  story_content
+  story_id
+  story_title
+  story_type
+  updated_at
+}
+class "StoryInteraction" as model.StoryInteraction {
+  interaction_id
+  is_liked
+  story_id
+  user_id
+  viewed_at
+}
+class "Topic" as model.Topic {
+  created_at
+  created_by_admin_id
+  deleted_at
+  module_id
+  progress
+  quizzes
+  topic_content
+  topic_id
+  topic_title
+  updated_at
+}
+class "Topics" as routes.topic.Topics {
+  get()
+}
+class "TopicsByLessonAndModule" as routes.topic.TopicsByLessonAndModule {
+  get(lesson_id, module_id)
+}
+class "Transaction" as model.Transaction {
+  amount
+  category
+  created_at
+  transaction_date
+  transaction_id
+  transaction_name
+  transaction_type
+  user_id
+}
+class "UpdateContent" as routes.topic.UpdateContent {
+  post(lesson_id, module_id, topic_id)
+}
+class "UpdateModule" as routes.module.UpdateModule {
+  put(lesson_id, module_id)
+}
+class "UpdateQuestion" as routes.quiz.UpdateQuestion {
+  put(lesson_id, module_id, topic_id, quiz_id, question_id)
+}
+class "UpdateQuizVisibility" as routes.quiz.UpdateQuizVisibility {
+  put(lesson_id, module_id, topic_id, quiz_id)
+}
+class "UpdateTopic" as routes.topic.UpdateTopic {
+  put(lesson_id, module_id, topic_id)
+}
+class "UploadContent" as routes.topic.UploadContent {
+  post(lesson_id, module_id, topic_id)
+}
+class "User" as model.User {
+  chatbot_messages
+  created_at
+  created_modules
+  created_questions
+  created_quizzes
+  created_stories
+  created_topics
+  email
+  password_hash
+  profile
+  question_attempts
+  quiz_attempts
+  sessions
+  story_interactions
+  topic_progress
+  transactions
+  updated_at
+  user_id
+  user_role
+  username
+}
+class "UserModuleProgress" as model.UserModuleProgress {
+  completed_at
+  last_accessed_at
+  module_id
+  progress_id
+  progress_percentage
+  started_at
+  topic_id
+  user_id
+}
+class "UserProfile" as model.UserProfile {
+  birth_date
+  created_at
+  full_name
+  gender
+  is_premium_user
+  parent_email
+  parent_password_hash
+  premium_passcode
+  profile_id
+  updated_at
+  user_id
+  validate_age()
+}
+class "UserSession" as model.UserSession {
+  chatbot_messages
+  is_active
+  login_at
+  logout_at
+  session_duration_seconds
+  session_id
+  session_token
+  user_id
+}
+class "ValidateToken" as routes.auth.ValidateToken {
+  get()
+}
+@enduml

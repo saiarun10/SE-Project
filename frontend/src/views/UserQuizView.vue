@@ -1,7 +1,7 @@
-```vue
+
 <template>
+      <Navbar />
   <div class="container py-4 px-3 px-md-4">
-    <Navbar />
     <Alert
       v-if="alert.visible"
       :message="alert.message"
@@ -65,8 +65,8 @@
         @close="closeExam"
       />
     </div>
-    <AppFooter />
   </div>
+      <AppFooter />
 </template>
 
 <script>

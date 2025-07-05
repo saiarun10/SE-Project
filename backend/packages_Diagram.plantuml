@@ -1,0 +1,25 @@
+@startuml packages_Diagram
+set namespaceSeparator none
+package "model" as model {
+}
+package "routes" as routes {
+}
+package "routes.auth" as routes.auth {
+}
+package "routes.lesson" as routes.lesson {
+}
+package "routes.module" as routes.module {
+}
+package "routes.profile" as routes.profile {
+}
+package "routes.quiz" as routes.quiz {
+}
+package "routes.topic" as routes.topic {
+}
+routes.auth --> model
+routes.lesson --> model
+routes.module --> model
+routes.profile --> model
+routes.quiz --> model
+routes.topic --> model
+@enduml
