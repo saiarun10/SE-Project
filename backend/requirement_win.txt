@@ -99,3 +99,4 @@ werkzeug
 pytz
 flasgger
 flask_restx
+python-magic-bin

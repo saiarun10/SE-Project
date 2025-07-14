@@ -166,7 +166,7 @@ class Question(db.Model):
     option2 = db.Column(db.String(255), nullable=False)
     option3 = db.Column(db.String(255), nullable=False)
     option4 = db.Column(db.String(255), nullable=False)
-    correct_answer = db.Column(db.String(255), nullable=False)
+    correct_answer = db.Column(db.String(255), nullable=True)
     score_points = db.Column(db.Integer, nullable=False, default=1)
     created_at = db.Column(db.DateTime, default=get_current_ist)
     updated_at = db.Column(db.DateTime, default=get_current_ist, onupdate=get_current_ist)

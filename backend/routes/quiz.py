@@ -78,18 +78,27 @@ start_quiz_model = quiz_ns.model('StartQuiz', {
     'quiz_id': fields.Integer(required=True, description='Quiz ID')
 })
 
+start_quiz_response_model = quiz_ns.model('StartQuizResponse', {
+    'message': fields.String(description='Success message'),
+    'quiz_attempt_access_token': fields.String(description='Quiz attempt access token'),
+    'total_questions': fields.Integer(description='Total number of questions in the quiz')
+})
+
 save_answer_model = quiz_ns.model('SaveAnswer', {
     'quiz_attempt_access_token': fields.String(required=True, description='Quiz attempt access token'),
     'question_id': fields.Integer(required=True, description='Question ID'),
     'selected_answer': fields.String(required=True, description='Selected answer')
 })
 
+# Define the nested model for responses in EvaluateQuiz
+response_model = quiz_ns.model('Response', {
+    'question_id': fields.Integer(required=True, description='Question ID'),
+    'selected_option': fields.String(required=True, description='Selected option')
+})
+
 evaluate_quiz_model = quiz_ns.model('EvaluateQuiz', {
     'quiz_attempt_access_token': fields.String(required=True, description='Quiz attempt access token'),
-    'responses': fields.List(fields.Nested({
-        'question_id': fields.Integer(required=True),
-        'selected_option': fields.String(required=True)
-    }))
+    'responses': fields.List(fields.Nested(response_model))
 })
 
 evaluate_quiz_response = quiz_ns.model('EvaluateQuizResponse', {
@@ -132,7 +141,7 @@ class QuizzesByTopic(Resource):
                 'quiz_id': quiz.quiz_id,
                 'module_id': quiz.module_id,
                 'topic_id': quiz.topic_id,
-                'created_by_admin_id': quiz.created_by_admin_id,
+                'created_by_admin_id': test.created_by_admin_id,
                 'quiz_title': quiz.quiz_title,
                 'duration_minutes': quiz.duration_minutes,
                 'is_visible': quiz.is_visible,
@@ -315,7 +324,7 @@ class QuestionsByQuiz(Resource):
         try:
             user_id = get_jwt_identity()
             user = User.query.filter_by(user_id=user_id).first()
-            if not user :
+            if not user:
                 abort(403, 'User not found or access denied')
 
             lesson = Lesson.query.filter_by(lesson_id=lesson_id).first()
@@ -416,7 +425,7 @@ class CreateQuestion(Resource):
 
             return {
                 'question_id': new_question.question_id,
-                'quiz_id': new_question.quiz_id,
+                'quiz_id': new_quiz.quiz_id,
                 'created_by_admin_id': new_question.created_by_admin_id,
                 'question_text': new_question.question_text,
                 'option1': new_question.option1,
@@ -568,7 +577,7 @@ class StartQuiz(Resource):
     @quiz_ns.doc('start_quiz', description='Start a new quiz attempt.', security='BearerAuth')
     @jwt_required()
     @quiz_ns.expect(start_quiz_model)
-    @quiz_ns.marshal_with({'message': fields.String, 'quiz_attempt_access_token': fields.String, 'total_questions': fields.Integer}, code=201)
+    @quiz_ns.marshal_with(start_quiz_response_model, code=201)
     @quiz_ns.response(400, 'Invalid input', error_model)
     @quiz_ns.response(401, 'Unauthorized', error_model)
     @quiz_ns.response(403, 'Quiz not accessible', error_model)
@@ -643,7 +652,7 @@ class StartQuiz(Resource):
         except Exception as e:
             db.session.rollback()
             abort(500, f'An unexpected error occurred: {str(e)}')
-            
+
 @quiz_ns.route('/save_answer')
 class SaveAnswer(Resource):
     @quiz_ns.doc('save_answer', description='Save or update user answer.', security='BearerAuth')
@@ -707,6 +716,7 @@ class SaveAnswer(Resource):
         except Exception as e:
             db.session.rollback()
             abort(500, f'An unexpected error occurred: {str(e)}')
+
 @quiz_ns.route('/evaluate_quiz')
 class EvaluateQuiz(Resource):
     @quiz_ns.doc('evaluate_quiz', description='Evaluate and submit quiz.', security='BearerAuth')
