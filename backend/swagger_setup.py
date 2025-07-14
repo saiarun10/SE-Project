@@ -7,7 +7,7 @@ def configure_swagger(app):
     api = Api(
         app,
         version='1.0',
-        title='GrowUp Richie App Swqgger API Documentation',
+        title='GrowUp Richie Swagger API Documentation',
         description='API for a financial literacy app for children aged 8-14',
         doc='/docs/',
         security='BearerAuth',
