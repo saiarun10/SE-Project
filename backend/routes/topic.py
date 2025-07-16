@@ -108,6 +108,95 @@ class TopicsByLessonAndModule(Resource):
         except Exception as e:
             abort(500, f'An unexpected error occurred: {str(e)}')
 
+@topic_ns.route('/lesson/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>')
+class SpecificTopic(Resource):
+    @jwt_required()
+    def get(self, lesson_id, module_id, topic_id):
+        print(f"DEBUG: Received request - lesson_id: {lesson_id}, module_id: {module_id}, topic_id: {topic_id}")
+        
+        try:
+            topic = Topic.query.filter_by(
+                topic_id=topic_id,
+                module_id=module_id,
+                deleted_at=None
+            ).first()
+            
+            print(f"DEBUG: Topic found: {topic}")
+            
+            if not topic:
+                print("DEBUG: Topic not found")
+                abort(404, 'Topic not found')
+            
+            # Handle binary content (PDF files)
+            pdf_available = False
+            if topic.topic_content:
+                try:
+                    # Try to decode as UTF-8 first (text content)
+                    topic_content = topic.topic_content.decode('utf-8')
+                except UnicodeDecodeError:
+                    # If it fails, it's likely a PDF file
+                    topic_content = None
+                    pdf_available = True
+            else:
+                topic_content = None
+            
+            return {
+                'topic_id': topic.topic_id,
+                'module_id': topic.module_id,
+                'topic_title': topic.topic_title,
+                'topic_content': topic_content,
+                'has_pdf': pdf_available,  # Indicate if PDF is available
+            }, 200
+            
+        except Exception as e:
+            print(f"DEBUG: Error occurred: {str(e)}")
+            print(f"DEBUG: Error type: {type(e)}")
+            import traceback
+            traceback.print_exc()
+            return {'error': 'Internal server error'}, 500
+
+@topic_ns.route('/lesson/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/pdf')
+class TopicPDF(Resource):
+    def get(self, lesson_id, module_id, topic_id):
+        try:
+            # Get token from query parameter or header
+            from flask import request
+            from flask_jwt_extended import decode_token
+            
+            token = request.args.get('token') or request.headers.get('Authorization', '').replace('Bearer ', '')
+            
+            if not token:
+                abort(401, 'Token required')
+            
+            # Verify token manually
+            try:
+                decode_token(token)
+            except:
+                abort(401, 'Invalid token')
+            
+            topic = Topic.query.filter_by(
+                topic_id=topic_id,
+                module_id=module_id,
+                deleted_at=None
+            ).first()
+            
+            if not topic or not topic.topic_content:
+                abort(404, 'PDF not found')
+            
+            # Return the PDF binary data
+            from flask import Response
+            return Response(
+                topic.topic_content,
+                mimetype='application/pdf',
+                headers={
+                    'Content-Disposition': f'inline; filename="{topic.topic_title}.pdf"'
+                }
+            )
+            
+        except Exception as e:
+            print(f"PDF serve error: {str(e)}")
+            return {'error': 'Failed to serve PDF'}, 500
+
 @topic_ns.route('/<int:lesson_id>/module/<int:module_id>/topic/create')
 class CreateTopic(Resource):
     @topic_ns.doc('create_topic', description='Create a new topic.', security='BearerAuth')
