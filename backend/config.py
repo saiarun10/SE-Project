@@ -53,7 +53,13 @@ class Config:
         SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS", "false").lower() == "true"
     except KeyError as e:
         raise KeyError(f"Missing required environment variable: {e}")
-
+    
+    try:
+        # Groq API Key
+        GROQ_API_KEY = os.environ["GROQ_API_KEY"]
+    except KeyError as e:
+        raise KeyError(f"Missing required environment variable: {e}")
+    
     try:
         # Frontend URL for CORS
         FRONTEND_URL = os.getenv("FRONTEND_URL")

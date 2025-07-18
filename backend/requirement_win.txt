@@ -100,3 +100,6 @@ pytz
 flasgger
 flask_restx
 python-magic-bin
+langchain
+langchain-groq
+groq

@@ -5,11 +5,21 @@
       <div class="container px-3 py-5">
         <!-- Header -->
         <h2 class="h1 fw-bold mb-5 text-brown-900">Welcome, Admin</h2>
+        
         <!-- Summary Section -->
         <section class="mb-5">
           <h2 class="h3 fw-semibold mb-4 text-brown-900">Overview</h2>
           <div class="row g-4">
-            <div class="col-12 col-sm-6 col-md-4" v-for="(item, index) in summaryData" :key="index">
+            <!-- Loading State -->
+            <div v-if="isLoading" class="col-12 text-center text-brown-900">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2">Fetching latest statistics...</p>
+            </div>
+            
+            <!-- Data Display -->
+            <div v-else class="col-12 col-sm-6 col-md-4" v-for="(item, index) in summaryData" :key="index">
               <div class="card text-center p-4 transition-all hover-scale-110 hover-shadow-lg text-brown-100 bg-brown-600">
                 <div class="fw-medium">{{ item.label }}</div>
                 <div class="h2 fw-bold mt-3">{{ item.value }}</div>
@@ -60,6 +70,7 @@
 <script>
 import AppFooter from '../components/Footer.vue';
 import Navbar from '../components/Navbar.vue';
+import axios from 'axios';
 
 export default {
   name: 'AdminDashboard',
@@ -69,16 +80,50 @@ export default {
   },
   data() {
     return {
-      summaryData: [
-        { label: 'Total Registered Users', value: '550' },
-        { label: 'Daily Active Users', value: '220' },
-        { label: 'Average Daily Time Spent', value: '30 Minutes' },
-        { label: 'Average Quiz Score', value: '50' },
-        { label: 'Average Quiz Time', value: '30 Min' },
-        { label: 'Number of Quizzes', value: '35' },
-      ]
+      isLoading: true,
+      summaryData: []
     };
   },
+  methods: {
+    async fetchSummaryData() {
+      this.isLoading = true;
+      try {
+        // Updated API endpoint to match the backend
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/admin_dashboard_summary`, {
+          headers: { Authorization: `Bearer ${this.$store.state.token}` }
+        });
+        
+        const data = response.data;
+        
+        // Map API response to the data structure required by the template
+        this.summaryData = [
+          { label: 'Total Registered Users', value: data.total_users },
+          { label: 'Daily Active Users', value: data.daily_active_users },
+          { label: 'Avg. Session Duration', value: data.avg_session_duration },
+          { label: 'Average Quiz Score', value: data.avg_quiz_score },
+          { label: 'Average Quiz Time', value: data.avg_quiz_time },
+          { label: 'Total Quizzes', value: data.total_quizzes },
+        ];
+      } catch (error) {
+        console.error("Failed to fetch dashboard summary:", error.response?.data || error.message);
+        // Provide fallback data on error for a better user experience
+        this.summaryData = [
+          { label: 'Total Registered Users', value: 'N/A' },
+          { label: 'Daily Active Users', value: 'N/A' },
+          { label: 'Avg. Session Duration', value: 'N/A' },
+          { label: 'Average Quiz Score', value: 'N/A' },
+          { label: 'Average Quiz Time', value: 'N/A' },
+          { label: 'Total Quizzes', value: 'N/A' },
+        ];
+        // You could also add an alert here to notify the admin of the failure
+      } finally {
+        this.isLoading = false;
+      }
+    }
+  },
+  mounted() {
+    this.fetchSummaryData();
+  }
 };
 </script>
 
@@ -126,6 +171,9 @@ export default {
   border: none;
   border-radius: 0.5rem;
   min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* Button styling */
@@ -147,15 +195,9 @@ export default {
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  .display-4 {
-    font-size: 2rem;
-  }
-  .h3 {
-    font-size: 1.5rem;
-  }
-  .h2 {
-    font-size: 1.75rem;
-  }
+  .h1 { font-size: 2.25rem; }
+  .h3 { font-size: 1.5rem; }
+  .h2 { font-size: 1.75rem; }
   .btn {
     width: 140px;
     height: 140px;
@@ -164,15 +206,9 @@ export default {
 }
 
 @media (max-width: 576px) {
-  .display-4 {
-    font-size: 1.5rem;
-  }
-  .h3 {
-    font-size: 1.25rem;
-  }
-  .h2 {
-    font-size: 1.5rem;
-  }
+  .h1 { font-size: 1.75rem; }
+  .h3 { font-size: 1.25rem; }
+  .h2 { font-size: 1.5rem; }
   .btn {
     width: 120px;
     height: 120px;

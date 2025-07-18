@@ -1,4 +1,3 @@
-
 <template>
   <Navbar />
   <div class="container py-4 px-3 px-md-4">
@@ -9,7 +8,7 @@
       @close="alert.visible = false"
     />
     <h2 class="mb-4 text-center text-black fw-bold">Admin, Please Manage Topic Content</h2>
-    <div class="shadow-lg p-3 p-md-4 mx-auto rounded-4 border" style="max-width: 720px;">
+    <div class="shadow-lg p-3 p-md-4 mx-auto rounded-4 border" style="max-width: 800px;">
       <div class="form-group mb-3">
         <label class="form-label text-black fw-semibold">Select Lesson</label>
         <select v-model="selectedLesson" class="form-select" @change="fetchModules" :disabled="isSubmitting">
@@ -24,50 +23,52 @@
           <option v-for="module in modules" :key="module.module_id" :value="module.module_id">{{ module.module_title }}</option>
         </select>
       </div>
+
       <div v-if="selectedModule && topics.length" class="mb-4">
         <h4 class="text-black fw-semibold mb-3">Topics for {{ selectedModuleName }}</h4>
         <ul class="list-group">
-          <li v-for="topic in topics" :key="topic.topic_id" class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-            <div>
+          <li v-for="topic in topics" :key="topic.topic_id" class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+            <div class="flex-grow-1">
               <strong>{{ topic.topic_title }}</strong>
-              <p class="mb-0 text-muted" v-if="topic.has_content">
-                <a href="#" @click.prevent="viewPdf(topic.topic_id)" class="text-primary">View PDF Content</a>
-              </p>
-              <p class="mb-0 text-muted" v-else>No content uploaded</p>
+              <p v-if="!topic.has_content" class="mb-0 text-muted small">No content uploaded</p>
             </div>
-            <div class="mt-2 mt-md-0">
-              <input
-                v-if="!topic.has_content"
-                type="file"
-                :ref="'fileInput-' + topic.topic_id"
-                class="form-control d-inline-block w-auto me-2"
-                @change="handleFileChange($event, topic.topic_id)"
-                :disabled="isSubmitting"
-                accept="application/pdf"
-              />
-              <button
-                v-if="!topic.has_content"
-                class="btn btn-primary btn-sm me-2 text-white"
-                @click="uploadContent(topic.topic_id)"
-                :disabled="!files[topic.topic_id] || isSubmitting"
-              >
-                <i class="fas fa-upload me-1"></i>Upload
-              </button>
-              <button
-                v-if="topic.has_content"
-                class="btn btn-primary btn-sm me-2 text-white"
-                @click="editContent(topic)"
-                :disabled="isSubmitting"
-              >
-                <i class="fas fa-edit me-1"></i>Edit
-              </button>
+            
+            <div class="d-flex align-items-center flex-shrink-0">
+              <template v-if="!topic.has_content">
+                <input
+                  type="file"
+                  :ref="'fileInput-' + topic.topic_id"
+                  class="form-control form-control-sm w-auto me-2"
+                  @change="handleFileChange($event, topic.topic_id)"
+                  :disabled="isSubmitting"
+                  accept="application/pdf"
+                />
+                <button
+                  class="btn btn-primary btn-sm text-white"
+                  @click="uploadContent(topic.topic_id)"
+                  :disabled="!files[topic.topic_id] || isSubmitting"
+                >
+                  <i class="fas fa-upload me-1"></i>Upload
+                </button>
+              </template>
+
+              <template v-if="topic.has_content">
+                <button class="btn btn-success btn-sm me-2 text-white" @click="viewPdf(topic)" :disabled="isSubmitting">
+                  <i class="fas fa-eye me-1"></i>View
+                </button>
+                <button class="btn btn-primary btn-sm me-2 text-white" @click="editContent(topic)" :disabled="isSubmitting">
+                  <i class="fas fa-edit me-1"></i>Edit
+                </button>
+                <button class="btn btn-danger btn-sm text-white" @click="deleteContent(topic.topic_id)" :disabled="isSubmitting">
+                  <i class="fas fa-trash-alt me-1"></i>Delete
+                </button>
+              </template>
             </div>
           </li>
         </ul>
       </div>
     </div>
 
-    <!-- Modal for editing content -->
     <div class="modal fade" id="editContentModal" tabindex="-1" aria-labelledby="editContentModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -78,27 +79,18 @@
             <button type="button" class="btn-close" @click="cancelEdit" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div class="form-group mb-3">
-              <label class="form-label text-black">Select New PDF File</label>
-              <input
-                type="file"
-                class="form-control"
-                ref="editFileInput"
-                @change="handleFileChange($event, editingTopic?.topic_id)"
-                :disabled="isSubmitting"
-                accept="application/pdf"
-              />
-            </div>
+            <p>Select a new PDF file to replace the existing content.</p>
+            <input
+              type="file"
+              class="form-control"
+              ref="editFileInput"
+              @change="handleFileChange($event, editingTopic?.topic_id)"
+              :disabled="isSubmitting"
+              accept="application/pdf"
+            />
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="cancelEdit"
-              :disabled="isSubmitting"
-            >
-              Cancel
-            </button>
+            <button type="button" class="btn btn-secondary" @click="cancelEdit" :disabled="isSubmitting">Cancel</button>
             <button
               type="button"
               class="btn btn-primary text-white"
@@ -111,6 +103,26 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="viewPdfModal" tabindex="-1" aria-labelledby="viewPdfModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-black fw-semibold" id="viewPdfModalLabel">
+              Viewing: {{ viewingTopicTitle }}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-0" style="height: 80vh;">
+            <iframe v-if="pdfUrl" :src="pdfUrl" width="100%" height="100%" frameborder="0"></iframe>
+            <div v-else class="d-flex justify-content-center align-items-center h-100">
+              <p>Loading PDF...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
   <AppFooter />
 </template>
@@ -120,7 +132,7 @@ import axios from 'axios';
 import Alert from '@/components/Alert.vue';
 import Navbar from '@/components/Navbar.vue';
 import AppFooter from '@/components/Footer.vue';
-import { Modal } from 'bootstrap'; // Import Bootstrap's Modal JS
+import { Modal } from 'bootstrap';
 
 export default {
   name: 'AddContent',
@@ -133,11 +145,14 @@ export default {
       selectedLesson: '',
       selectedModule: '',
       selectedModuleName: '',
-      files: {}, // Store files by topic_id
-      editingTopic: null, // Track topic being edited
+      files: {},
+      editingTopic: null,
       isSubmitting: false,
       alert: { visible: false, message: '', type: 'notification' },
-      editModal: null, // Reference to Bootstrap modal instance
+      editModal: null,
+      viewPdfModal: null, // Modal instance for PDF viewer
+      pdfUrl: '',         // URL for the PDF blob
+      viewingTopicTitle: '', // Title for the PDF viewer modal
     };
   },
   methods: {
@@ -147,9 +162,7 @@ export default {
           headers: { Authorization: `Bearer ${this.$store.state.token}` }
         });
         this.lessons = response.data;
-        console.log('Lessons:', this.lessons);
       } catch (err) {
-        console.error('Fetch Lessons Error:', err.response?.data || err.message);
         this.alert = { visible: true, message: 'Failed to load lessons', type: 'error' };
       }
     },
@@ -158,33 +171,22 @@ export default {
         this.modules = [];
         this.selectedModule = '';
         this.topics = [];
-        this.selectedModuleName = '';
-        this.files = {};
-        this.editingTopic = null;
         return;
       }
+      this.topics = [];
+      this.selectedModule = '';
       try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/${this.selectedLesson}/modules`, {
           headers: { Authorization: `Bearer ${this.$store.state.token}` }
         });
         this.modules = response.data;
-        console.log('Modules:', this.modules);
-        const module = this.modules.find(m => m.module_id === parseInt(this.selectedModule));
-        this.selectedModuleName = module ? module.module_title : '';
-        this.selectedModule = '';
-        this.topics = [];
-        this.files = {};
-        this.editingTopic = null;
       } catch (err) {
-        console.error('Fetch Modules Error:', err.response?.data || err.message);
         this.alert = { visible: true, message: 'Failed to load modules', type: 'error' };
       }
     },
     async fetchTopics() {
       if (!this.selectedModule) {
         this.topics = [];
-        this.files = {};
-        this.editingTopic = null;
         return;
       }
       try {
@@ -192,14 +194,12 @@ export default {
           headers: { Authorization: `Bearer ${this.$store.state.token}` }
         });
         this.topics = response.data;
-        console.log('Topics:', this.topics);
         const module = this.modules.find(m => m.module_id === parseInt(this.selectedModule));
         this.selectedModuleName = module ? module.module_title : '';
         if (this.topics.length === 0) {
           this.alert = { visible: true, message: 'No topics available for this module', type: 'warning' };
         }
       } catch (err) {
-        console.error('Fetch Topics Error:', err.response?.data || err.message);
         this.alert = { visible: true, message: 'Failed to load topics', type: 'error' };
       }
     },
@@ -207,141 +207,135 @@ export default {
       const file = event.target.files[0];
       if (file) {
         this.files[topicId] = file;
-        console.log('File selected for topic', topicId, ':', this.files[topicId]);
-      } else {
-        console.warn('No file selected for topic', topicId);
       }
     },
     async uploadContent(topicId) {
-      console.log('Upload button clicked for topic', topicId, {
-        file: this.files[topicId],
-        isSubmitting: this.isSubmitting,
-        lessonId: this.selectedLesson,
-        moduleId: this.selectedModule
-      });
-      if (!this.files[topicId]) {
+      const file = this.files[topicId];
+      if (!file) {
         this.alert = { visible: true, message: 'Please select a PDF file to upload', type: 'error' };
         return;
       }
-      if (!this.files[topicId].type.includes('application/pdf')) {
+      if (file.type !== 'application/pdf') {
         this.alert = { visible: true, message: 'Only PDF files are allowed', type: 'error' };
         return;
       }
       this.isSubmitting = true;
       const formData = new FormData();
-      formData.append('content_file', this.files[topicId]);
-      console.log('FormData content:', formData.get('content_file'));
+      formData.append('content_file', file);
       try {
-        const response = await axios.post(
+        await axios.post(
           `${import.meta.env.VITE_BASE_URL}/api/${this.selectedLesson}/module/${this.selectedModule}/topic/${topicId}/upload_content`,
           formData,
-          {
-            headers: { Authorization: `Bearer ${this.$store.state.token}`, 'Content-Type': 'multipart/form-data' }
-          }
+          { headers: { Authorization: `Bearer ${this.$store.state.token}`, 'Content-Type': 'multipart/form-data' } }
         );
-        console.log('Upload response:', response.data);
-        this.alert = { visible: true, message: 'Content uploaded successfully', type: 'success' };
+        this.alert = { visible: true, message: 'Content uploaded successfully!', type: 'success' };
         this.files[topicId] = null;
         this.$refs[`fileInput-${topicId}`][0].value = '';
         await this.fetchTopics();
       } catch (err) {
-        console.error('Upload Content Error:', err.response?.data || err.message);
         this.alert = { visible: true, message: `Failed to upload content: ${err.response?.data?.error || err.message}`, type: 'error' };
       } finally {
         this.isSubmitting = false;
-        console.log('Upload request completed');
       }
     },
     async updateContent(topicId) {
-      console.log('Submit button clicked for topic', topicId, {
-        file: this.files[topicId],
-        isSubmitting: this.isSubmitting
-      });
-      if (!this.files[topicId]) {
-        this.alert = { visible: true, message: 'Please select a PDF file to upload', type: 'error' };
+      const file = this.files[topicId];
+      if (!file) {
+        this.alert = { visible: true, message: 'Please select a new PDF file to upload', type: 'error' };
         return;
       }
-      if (!this.files[topicId].type.includes('application/pdf')) {
+       if (file.type !== 'application/pdf') {
         this.alert = { visible: true, message: 'Only PDF files are allowed', type: 'error' };
         return;
       }
       this.isSubmitting = true;
       const formData = new FormData();
-      formData.append('content_file', this.files[topicId]);
-      console.log('FormData content:', formData.get('content_file'));
+      formData.append('content_file', file);
       try {
-        const response = await axios.post(
+        await axios.post(
           `${import.meta.env.VITE_BASE_URL}/api/${this.selectedLesson}/module/${this.selectedModule}/topic/${topicId}/update_content`,
           formData,
-          {
-            headers: { Authorization: `Bearer ${this.$store.state.token}`, 'Content-Type': 'multipart/form-data' }
-          }
+          { headers: { Authorization: `Bearer ${this.$store.state.token}`, 'Content-Type': 'multipart/form-data' } }
         );
-        console.log('Update response:', response.data);
-        this.alert = { visible: true, message: 'Content uploaded successfully', type: 'success' };
-        this.files[topicId] = null;
-        this.$refs.editFileInput.value = '';
-        this.cancelEdit(); // Close modal
+        this.alert = { visible: true, message: 'Content updated successfully!', type: 'success' };
+        this.cancelEdit();
         await this.fetchTopics();
       } catch (err) {
-        console.error('Update Content Error:', err.response?.data || err.message);
-        this.alert = { visible: true, message: `Failed to upload content: ${err.response?.data?.error || err.message}`, type: 'error' };
+        this.alert = { visible: true, message: `Failed to update content: ${err.response?.data?.error || err.message}`, type: 'error' };
       } finally {
         this.isSubmitting = false;
-        console.log('Update request completed');
       }
     },
-    async viewPdf(topicId) {
-      console.log('View PDF clicked for topic', topicId);
+    async viewPdf(topic) {
+      this.pdfUrl = '';
+      this.viewingTopicTitle = topic.topic_title;
+      this.viewPdfModal.show(); // Show modal with loading indicator
+
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/api/${this.selectedLesson}/module/${this.selectedModule}/topic/${topicId}/download_content`,
+          `${import.meta.env.VITE_BASE_URL}/api/${this.selectedLesson}/module/${this.selectedModule}/topic/${topic.topic_id}/download_content`,
           {
             headers: { Authorization: `Bearer ${this.$store.state.token}` },
             responseType: 'blob'
           }
         );
-        console.log('View PDF response:', response);
         const blob = new Blob([response.data], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-        window.open(url, '_blank');
+        this.pdfUrl = window.URL.createObjectURL(blob);
       } catch (err) {
-        console.error('View PDF Error:', err.response?.data || err.message);
         this.alert = { visible: true, message: 'Failed to load PDF content', type: 'error' };
+        this.viewPdfModal.hide(); // Hide modal on error
+      }
+    },
+    async deleteContent(topicId) {
+      if (!confirm('Are you sure you want to delete this content? This action cannot be undone.')) {
+        return;
+      }
+      this.isSubmitting = true;
+      try {
+        await axios.delete(
+          `${import.meta.env.VITE_BASE_URL}/api/${this.selectedLesson}/module/${this.selectedModule}/topic/${topicId}/delete_content`,
+          { headers: { Authorization: `Bearer ${this.$store.state.token}` } }
+        );
+        this.alert = { visible: true, message: 'Content deleted successfully!', type: 'success' };
+        await this.fetchTopics();
+      } catch (err) {
+        this.alert = { visible: true, message: `Failed to delete content: ${err.response?.data?.error || err.message}`, type: 'error' };
+      } finally {
+        this.isSubmitting = false;
       }
     },
     editContent(topic) {
-      console.log('Edit button clicked for topic:', topic);
       this.editingTopic = topic;
-      this.files[topic.topic_id] = null;
+      this.files[topic.topic_id] = null; // Clear any previously selected file for this topic
       this.$nextTick(() => {
-        const modal = new Modal(document.getElementById('editContentModal'));
-        modal.show();
-        this.editModal = modal; // Store modal instance
+        this.editModal.show();
       });
     },
     cancelEdit() {
-      console.log('Cancel edit clicked');
-      if (this.editModal) {
-        this.editModal.hide();
-      }
+      if (this.editModal) this.editModal.hide();
       this.editingTopic = null;
-      this.files = {};
       if (this.$refs.editFileInput) this.$refs.editFileInput.value = '';
     },
   },
-  watch: {
-    selectedModule() {
-      this.topics = [];
-      this.files = {};
-      this.editingTopic = null;
-      if (this.$refs.editFileInput) this.$refs.editFileInput.value = '';
-      if (this.editModal) this.editModal.hide();
-    }
-  },
   mounted() {
-    console.log('Component mounted, Token:', this.$store.state.token);
     this.fetchLessons();
+    
+    // Initialize modals
+    const editModalEl = document.getElementById('editContentModal');
+    if (editModalEl) this.editModal = new Modal(editModalEl);
+
+    const viewPdfModalEl = document.getElementById('viewPdfModal');
+    if (viewPdfModalEl) {
+      this.viewPdfModal = new Modal(viewPdfModalEl);
+      // Cleanup blob URL to prevent memory leaks
+      viewPdfModalEl.addEventListener('hidden.bs.modal', () => {
+        if (this.pdfUrl) {
+          window.URL.revokeObjectURL(this.pdfUrl);
+          this.pdfUrl = '';
+          this.viewingTopicTitle = '';
+        }
+      });
+    }
   },
 };
 </script>
@@ -366,21 +360,14 @@ input:disabled, select:disabled {
 }
 .list-group-item {
   border-color: #dee2e6;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
-@media (max-width: 576px) {
-  .container {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  h2 {
-    font-size: 1.5rem;
-  }
-  h4 {
-    font-size: 1.2rem;
-  }
-  .btn-sm {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
+@media (max-width: 767px) {
+  .list-group-item .d-flex.align-items-center {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
   }
 }
 </style>

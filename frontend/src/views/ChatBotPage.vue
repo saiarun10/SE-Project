@@ -1,68 +1,75 @@
 <template>
-  <div class="chatbot-page-container min-vh-100 d-flex flex-column bg-info-subtle">
+  <div class="page-container d-flex flex-column bg-light">
     <Navbar />
-    <main class="chatbot-content flex-grow-1 container my-5">
-      <h1 class="page-title display-4 fw-bold text-center mb-5 text-primary">Chat with Financial Bot</h1>
-      <div class="chatbot-container mx-auto" style="max-width: 800px;">
-        <div class="card shadow-lg border-light">
-          <div class="card-header bg-primary text-white p-4 d-flex align-items-center gap-3">
-            <i class="fas fa-robot fs-4"></i>
-            <h2 class="h4 mb-0 fw-semibold">Financial Bot Assistant</h2>
-          </div>
-          <div class="card-body p-4">
-            <div class="chat-messages mb-4" style="height: 500px; overflow-y: auto; background: #f8f9fa;">
-              <div v-for="(message, index) in messages" :key="index" :class="['mb-3 d-flex', message.sender === 'user' ? 'justify-content-end' : 'justify-content-start']">
-                <div class="d-flex align-items-end gap-2" style="max-width: 70%;">
-                  <i v-if="message.sender !== 'user'" class="fas fa-robot text-primary fs-5"></i>
-                  <div :class="[
-                    'p-3 rounded-3 position-relative',
-                    message.sender === 'user' ? 'bg-info-subtle text-info-emphasis rounded-bottom-end-0' : 'bg-light text-dark rounded-bottom-start-0'
-                  ]">
-                    <span class="fw-semibold">{{ message.sender === 'user' ? 'You' : 'Bot' }}: </span>
-                    {{ message.text }}
-                    <div class="text-muted small mt-1 text-end">
-                      {{ message.timestamp }}
-                    </div>
-                    <div :class="[
-                      'position-absolute w-3 h-3 bottom-0',
-                      message.sender === 'user' ? 'end-0 bg-info-subtle clip-right' : 'start-0 bg-light clip-left'
-                    ]"></div>
-                  </div>
-                  <i v-if="message.sender === 'user'" class="fas fa-user text-primary fs-5"></i>
-                </div>
+    <div class="content-wrapper d-flex flex-grow-1">
+      <!-- Collapsible Sidebar for History -->
+      <div :class="['sidebar bg-white shadow-sm', { 'collapsed': isSidebarCollapsed }]">
+        <div class="sidebar-header p-3 d-flex justify-content-between align-items-center">
+          <h3 v-if="!isSidebarCollapsed" class="h5 mb-0">Chat History</h3>
+          <button @click="toggleSidebar" class="btn btn-sm btn-outline-secondary">
+            <i :class="isSidebarCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
+          </button>
+        </div>
+        <div v-if="!isSidebarCollapsed" class="history-filters p-3">
+          <select v-model="selectedTimeRange" @change="fetchChatHistory" class="form-select form-select-sm">
+            <option value="1h">Last Hour</option>
+            <option value="6h">Last 6 Hours</option>
+            <option value="1d">Last 24 Hours</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="all">All Time</option>
+          </select>
+        </div>
+        <div v-if="!isSidebarCollapsed" class="history-list list-group list-group-flush flex-grow-1">
+           <p v-if="history.length === 0" class="text-muted p-3 small">No history for this period.</p>
+           <a href="#" v-else v-for="(item, index) in history" :key="index" class="list-group-item list-group-item-action py-2">
+              <div class="d-flex w-100 justify-content-between">
+                <strong class="mb-1">{{ item.sender === 'user' ? 'You' : 'Bot' }}</strong>
+                <small>{{ item.timestamp }}</small>
               </div>
-              <div v-if="isTyping" class="mb-3 d-flex justify-content-start">
-                <div class="d-flex align-items-end gap-2" style="max-width: 70%;">
-                  <i class="fas fa-robot text-primary fs-5"></i>
-                  <div class="p-3 rounded-3 bg-light text-dark rounded-bottom-start-0 position-relative">
-                    <span class="fw-semibold">Bot: </span>Typing...
-                    <div class="position-absolute w-3 h-3 bottom-0 start-0 bg-light clip-left"></div>
-                  </div>
+              <p class="mb-1 small text-muted">{{ item.text.substring(0, 40) }}...</p>
+           </a>
+        </div>
+      </div>
+
+      <!-- Main Chat Content -->
+      <main class="chat-main flex-grow-1 d-flex flex-column p-3 p-md-4">
+        <div class="chat-container card shadow-sm border-light flex-grow-1">
+          <div class="card-header bg-primary text-white p-3 d-flex align-items-center gap-3">
+            <i class="fas fa-robot fs-4"></i>
+            <h2 class="h5 mb-0 fw-semibold">FinBot Assistant</h2>
+          </div>
+          <div ref="chatMessages" class="card-body chat-messages p-3">
+            <!-- Messages -->
+            <div v-for="(message, index) in messages" :key="index" :class="['mb-3 d-flex', message.sender === 'user' ? 'justify-content-end' : 'justify-content-start']">
+              <div class="d-flex align-items-end gap-2" style="max-width: 70%;">
+                <i v-if="message.sender !== 'user'" class="fas fa-robot text-primary fs-5"></i>
+                <div :class="['p-3 rounded-3', message.sender === 'user' ? 'bg-info-subtle text-info-emphasis' : 'bg-white border']">
+                  <span class="fw-semibold">{{ message.sender === 'user' ? 'You' : 'Bot' }}: </span>
+                  <span v-html="message.text"></span>
+                  <div class="text-muted small mt-1 text-end">{{ message.timestamp }}</div>
                 </div>
+                <i v-if="message.sender === 'user'" class="fas fa-user text-primary fs-5"></i>
               </div>
             </div>
+            <!-- Typing Indicator -->
+            <div v-if="isTyping" class="d-flex justify-content-start">
+              <div class="d-flex align-items-end gap-2">
+                <i class="fas fa-robot text-primary fs-5"></i>
+                <div class="p-3 rounded-3 bg-white border">Typing...</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer p-3 bg-white">
             <div class="input-group">
-              <input 
-                v-model="userInput" 
-                @keyup.enter="sendMessage"
-                type="text" 
-                class="form-control p-3 rounded-pill border-primary-subtle" 
-                placeholder="Type your financial query..." 
-                aria-label="Chat input"
-              >
-              <button 
-                @click="sendMessage" 
-                class="btn btn-primary text-white px-4 rounded-pill d-flex align-items-center gap-2" 
-                :disabled="!userInput.trim()"
-              >
-                <i class="fas fa-paper-plane"></i>
-                Send
+              <input v-model="userInput" @keyup.enter="sendMessage" type="text" class="form-control p-3" placeholder="Ask FinBot a question..." :disabled="isTyping">
+              <button @click="sendMessage" class="btn btn-primary text-white px-4" :disabled="!userInput.trim() || isTyping">
+                <i class="fas fa-paper-plane me-2"></i>Send
               </button>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
     <AppFooter />
   </div>
 </template>
@@ -70,102 +77,148 @@
 <script>
 import Navbar from '@/components/Navbar.vue';
 import AppFooter from '@/components/Footer.vue';
+import axios from 'axios';
 
 export default {
   name: 'ChatBotPage',
-  components: {
-    Navbar,
-    AppFooter,
-  },
+  components: { Navbar, AppFooter },
   data() {
     return {
       userInput: '',
-      messages: [
-        { 
-          sender: 'bot', 
-          text: 'Hello, I am an AI bot for financial queries. How can I assist you today?', 
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ],
+      messages: [],
+      history: [],
       isTyping: false,
-      botReplies: [
-        'Great question! Let me break down some financial insights for you...',
-        'I can help with budgeting, investments, or loans. What’s on your mind?',
-        'Did you know compound interest can be your best friend? Want to explore that?',
-        'Let’s talk money! What financial topic are you curious about?',
-        'I’m crunching the numbers for you! What do you want to discuss?',
-        'Financial planning can be fun! What’s your next money move?'
-      ]
+      isSidebarCollapsed: window.innerWidth < 768, // Collapse by default on smaller screens
+      selectedTimeRange: '1h',
     };
   },
   methods: {
-    sendMessage() {
-      if (!this.userInput.trim()) return;
+    toggleSidebar() {
+      this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const chatContainer = this.$refs.chatMessages;
+        if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+      });
+    },
+    async fetchChatHistory() {
+        // This method is now simplified to fetch history for the sidebar.
+        // The main chat window will only show the current session's history.
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/chatbot/history/${this.selectedTimeRange}`, {
+          headers: { Authorization: `Bearer ${this.$store.state.token}` }
+        });
+        this.history = response.data.history;
+      } catch (error) {
+        console.error('Failed to fetch chat history:', error);
+        this.history = []; // Clear history on error
+      }
+    },
+    async fetchCurrentSessionHistory() {
+      // Fetches only the current session's history for the main chat window
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/history`, {
+          headers: { Authorization: `Bearer ${this.$store.state.token}` }
+        });
+        this.messages = response.data.history;
+        if (this.messages.length === 0) {
+           this.messages.push({ 
+            sender: 'bot', 
+            text: 'Hello! I am FinBot. Ask me about saving or earning money!', 
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          });
+        }
+        this.scrollToBottom();
+      } catch (error) {
+        console.error('Failed to fetch current session history:', error);
+      }
+    },
+    async sendMessage() {
+      const messageText = this.userInput.trim();
+      if (!messageText || this.isTyping) return;
 
-      // Add user message with timestamp
       this.messages.push({
         sender: 'user',
-        text: this.userInput,
+        text: messageText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
-
-      // Clear input
+      
       this.userInput = '';
-
-      // Show typing indicator
       this.isTyping = true;
+      this.scrollToBottom();
 
-      // Simulate bot response delay
-      setTimeout(() => {
-        const randomReply = this.botReplies[Math.floor(Math.random() * this.botReplies.length)];
+      try {
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/send_message`, 
+          { message: messageText },
+          { headers: { Authorization: `Bearer ${this.$store.state.token}` } }
+        );
+        this.messages.push(response.data.reply);
+      } catch (error) {
+        let botErrorMessage = 'Sorry, I am having trouble connecting. Please try again.';
+        if (error.response && error.response.status === 403) {
+            botErrorMessage = `You've reached your free message limit! <a href="/premium" class="text-primary fw-bold">Upgrade to Premium</a> for unlimited chats.`;
+        } else {
+            console.error('Failed to send message:', error);
+        }
         this.messages.push({
           sender: 'bot',
-          text: randomReply,
+          text: botErrorMessage,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         });
+      } finally {
         this.isTyping = false;
-
-        // Scroll to bottom of chat
-        this.$nextTick(() => {
-          const chatContainer = this.$el.querySelector('.chat-messages');
-          chatContainer.scrollTop = chatContainer.scrollHeight;
-        });
-      }, 1000);
+        this.scrollToBottom();
+      }
     }
+  },
+  mounted() {
+    this.fetchCurrentSessionHistory(); // Load main chat window
+    this.fetchChatHistory(); // Load sidebar history
   }
 };
 </script>
 
 <style scoped>
-.chatbot-page-container {
+.page-container {
+  height: 100vh;
+  overflow: hidden;
+}
+.content-wrapper {
+  overflow: hidden; /* Prevent this wrapper from scrolling */
+}
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+.sidebar.collapsed {
+  width: 60px;
+}
+.sidebar.collapsed .history-filters,
+.sidebar.collapsed .history-list {
+  display: none;
+}
+.history-list {
+  overflow-y: auto;
+}
+.chat-main {
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
-
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden; /* Prevent the card itself from scrolling */
+}
 .chat-messages {
-  scrollbar-width: thin;
-  scrollbar-color: #0dcaf0 #f8f9fa;
-}
-
-.chat-messages::-webkit-scrollbar {
-  width: 8px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: #f8f9fa;
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background: #0dcaf0;
-  border-radius: 4px;
-}
-
-/* WhatsApp-like message tails */
-.clip-right {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%);
-}
-
-.clip-left {
-  clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
+  flex-grow: 1;
+  overflow-y: auto;
 }
 </style>

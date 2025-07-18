@@ -368,7 +368,6 @@ class DownloadContent(Resource):
     @jwt_required()
     @topic_ns.response(200, 'PDF content', None)
     @topic_ns.response(401, 'Unauthorized: Missing or invalid token', error_model)
-    @topic_ns.response(403, 'Admin access required', error_model)
     @topic_ns.response(404, 'Lesson, module, topic, or content not found', error_model)
     @topic_ns.response(500, 'Unexpected error', error_model)
     def get(self, lesson_id, module_id, topic_id):
@@ -376,8 +375,8 @@ class DownloadContent(Resource):
         try:
             user_id = get_jwt_identity()
             user = User.query.filter_by(user_id=user_id).first()
-            if not user or user.user_role != 'admin':
-                abort(403, 'Admin access required')
+            if not user:
+                abort(404, 'User not found')
 
             lesson = Lesson.query.filter_by(lesson_id=lesson_id).first()
             if not lesson:
@@ -402,4 +401,48 @@ class DownloadContent(Resource):
             )
 
         except Exception as e:
+            abort(500, f'An unexpected error occurred: {str(e)}')
+
+# --- NEWLY ADDED ENDPOINT ---
+@topic_ns.route('/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/delete_content')
+class DeleteContent(Resource):
+    @topic_ns.doc('delete_content', description='Delete the PDF content for a topic.', security='BearerAuth')
+    @jwt_required()
+    @topic_ns.marshal_with(success_model, code=200)
+    @topic_ns.response(401, 'Unauthorized: Missing or invalid token', error_model)
+    @topic_ns.response(403, 'Admin access required', error_model)
+    @topic_ns.response(404, 'Lesson, module, or topic not found', error_model)
+    @topic_ns.response(500, 'Unexpected error', error_model)
+    def delete(self, lesson_id, module_id, topic_id):
+        """Delete the PDF content for a topic."""
+        try:
+            user_id = get_jwt_identity()
+            user = User.query.filter_by(user_id=user_id).first()
+            if not user or user.user_role != 'admin':
+                abort(403, 'Admin access required')
+
+            lesson = Lesson.query.filter_by(lesson_id=lesson_id).first()
+            if not lesson:
+                abort(404, 'Lesson not found')
+
+            module = Module.query.filter_by(module_id=module_id, lesson_id=lesson_id, deleted_at=None).first()
+            if not module:
+                abort(404, 'Module not found')
+
+            topic = Topic.query.filter_by(topic_id=topic_id, module_id=module_id, deleted_at=None).first()
+            if not topic:
+                abort(404, 'Topic not found')
+            
+            if not topic.topic_content:
+                return {'message': 'No content to delete'}, 200
+
+            # Set content to NULL and update timestamp
+            topic.topic_content = None
+            topic.updated_at = get_current_ist()
+            db.session.commit()
+
+            return {'message': 'Content deleted successfully'}, 200
+
+        except Exception as e:
+            db.session.rollback()
             abort(500, f'An unexpected error occurred: {str(e)}')
