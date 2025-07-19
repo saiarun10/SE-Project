@@ -14,13 +14,8 @@
 
       <!-- Header Section -->
       <div class="header-section">
-        
-        <h1 class="page-title">Learn {{ currentLesson?.title }}, {{ userName }}</h1>
 
-       
-        <div class="topic-icon-header" @click="openCalculator">
-          <img src="@/assets/calculator.png" alt="Calculator" class="calculator-icon" />
-        </div>
+        <h1 class="page-title">Learn {{ currentLesson?.title }}, {{ userName }}</h1>
       </div>
 
       <!-- Loading State -->
@@ -122,22 +117,6 @@
       </div>
     </div>
 
-    <!-- Floating Calculator Window -->
-    <div v-if="showCalculator" class="floating-calculator-overlay" @click="closeCalculator">
-      <div class="floating-calculator-window" @click.stop>
-        <div class="floating-calculator-header">
-          <h3>Calculator</h3>
-          <button @click="closeCalculator" class="close-btn">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="floating-calculator-content">
-          <Calculator />
-        </div>
-      </div>
-    </div>
-
-    
   </div>
   <AppFooter />
 </template>
@@ -146,7 +125,6 @@
 import Navbar from '@/components/Navbar.vue'
 import AppFooter from '@/components/Footer.vue'
 import Alert from '@/components/Alert.vue'
-import Calculator from '@/views/CalculatorView.vue' 
 import axios from 'axios'
 import { mapState } from 'vuex'
 
@@ -156,7 +134,6 @@ export default {
     Navbar,
     AppFooter,
     Alert,
-    Calculator
   },
   props: ['id'],
   
@@ -167,7 +144,6 @@ export default {
       currentLesson: null,
       lessonId: null,
       expandedModule: null,
-      showCalculator: false,
       modules: [],
       topics: {}, // This should be reactive in Vue 3
       alert: { visible: false, message: '', type: '' }
@@ -276,14 +252,6 @@ export default {
         6: 'Financial Planning'
       };
       return lessonTitles[lessonId] || `Lesson ${lessonId}`;
-    },
-
-    openCalculator() {
-      this.showCalculator = true;
-    },
-    
-    closeCalculator() {
-      this.showCalculator = false;
     },
 
       selectTopic(module, topic) {
@@ -728,53 +696,7 @@ export default {
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-.calculator-icon {
-  width: 48px;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 4px;
-}
 
-/* Floating Calculator Styles */
-.floating-calculator-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease;
-}
-
-.floating-calculator-window {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  max-width: 400px;
-  width: 90%;
-  max-height: 80vh;
-  overflow: hidden;
-  animation: slideIn 0.3s ease;
-}
-
-.floating-calculator-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.floating-calculator-header h3 {
-  margin: 0;
-  color: #333;
-  font-size: 1.2rem;
-}
 
 .close-btn {
   background: #dc3545;
@@ -799,11 +721,6 @@ export default {
   box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
 }
 
-.floating-calculator-content {
-  padding: 0;
-  max-height: calc(80vh - 70px);
-  overflow-y: auto;
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -835,10 +752,5 @@ export default {
   .topics-dropdown.show {
     padding: 1rem;
   }
-
- 
-
-
-
 }
 </style>
