@@ -62,7 +62,8 @@ db.sqlite3
 db.sqlite3-journal
 
 # Flask stuff:
-
+*.db
+instance/
 *.dot
 .webassets-cache
 
@@ -71,6 +72,7 @@ db.sqlite3-journal
 
 # Sphinx documentation
 docs/_build/
+backend/instance/database.db
 
 # PyBuilder
 .pybuilder/
