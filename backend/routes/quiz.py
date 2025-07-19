@@ -26,6 +26,20 @@ quiz_model = quiz_ns.model('Quiz', {
     'updated_at': fields.DateTime(description='Last updated date')
 })
 
+quiz_model_with_stats = quiz_ns.model('QuizWithStats', {
+    'quiz_id': fields.Integer(description='Quiz ID'),
+    'module_id': fields.Integer(description='Module ID'),
+    'topic_id': fields.Integer(description='Topic ID'),
+    'quiz_title': fields.String(description='Quiz title'),
+    'duration_minutes': fields.Integer(description='Quiz duration in minutes'),
+    'is_visible': fields.Boolean(description='Quiz visibility status'),
+    'created_at': fields.DateTime(description='Creation date'),
+    'updated_at': fields.DateTime(description='Last updated date'),
+    'total_questions': fields.Integer(description='Total number of questions in the quiz'),
+    'total_score': fields.Integer(description='Total score possible for the quiz')
+})
+
+
 question_model = quiz_ns.model('Question', {
     'question_id': fields.Integer(description='Question ID'),
     'quiz_id': fields.Integer(description='Quiz ID'),
@@ -74,6 +88,28 @@ error_model = quiz_ns.model('Error', {
     'error': fields.String(description='Error message')
 })
 
+
+# Model for the individual question details in the response
+question_details_model = quiz_ns.model('QuestionDetails', {
+    'question_id': fields.Integer,
+    'question_text': fields.String,
+    'option1': fields.String,
+    'option2': fields.String,
+    'option3': fields.String,
+    'option4': fields.String,
+    'score_points': fields.Integer,
+    'selected_answer': fields.String(description='The user\'s previously saved answer for this question, if any.')
+})
+
+# Model for the main response of the new endpoint
+quiz_details_response_model = quiz_ns.model('QuizDetailsResponse', {
+    'quiz_title': fields.String,
+    'duration_minutes': fields.Integer,
+    'questions': fields.List(fields.Nested(question_details_model))
+})
+
+
+
 start_quiz_model = quiz_ns.model('StartQuiz', {
     'quiz_id': fields.Integer(required=True, description='Quiz ID')
 })
@@ -109,16 +145,17 @@ evaluate_quiz_response = quiz_ns.model('EvaluateQuizResponse', {
 
 @quiz_ns.route('/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/quizzes')
 class QuizzesByTopic(Resource):
-    @quiz_ns.doc('get_quizzes_by_topic', description='Retrieve all quizzes for a specific topic.', security='BearerAuth')
+    @quiz_ns.doc('get_quizzes_by_topic', description='Retrieve all quizzes for a specific topic with question count and total score.', security='BearerAuth')
     @jwt_required()
-    @quiz_ns.marshal_list_with(quiz_model, code=200)
+    @quiz_ns.marshal_list_with(quiz_model_with_stats, code=200) # Use the new model
     @quiz_ns.response(401, 'Unauthorized: Missing or invalid token', error_model)
     @quiz_ns.response(403, 'Admin access required', error_model)
     @quiz_ns.response(404, 'Lesson, module, or topic not found', error_model)
     @quiz_ns.response(500, 'Unexpected error', error_model)
     def get(self, lesson_id, module_id, topic_id):
-        """Retrieve all quizzes for a specific topic."""
+        """Retrieve all quizzes for a specific topic with question count and total score."""
         try:
+            # --- User and path validation (remains the same) ---
             user_id = get_jwt_identity()
             user = User.query.filter_by(user_id=user_id).first()
             if not user:
@@ -136,21 +173,46 @@ class QuizzesByTopic(Resource):
             if not topic:
                 abort(404, 'Topic not found')
 
-            quizzes = Quiz.query.filter_by(topic_id=topic_id, deleted_at=None).all()
-            return [{
-                'quiz_id': quiz.quiz_id,
-                'module_id': quiz.module_id,
-                'topic_id': quiz.topic_id,
-                'created_by_admin_id': test.created_by_admin_id,
-                'quiz_title': quiz.quiz_title,
-                'duration_minutes': quiz.duration_minutes,
-                'is_visible': quiz.is_visible,
-                'created_at': quiz.created_at,
-                'updated_at': quiz.updated_at
-            } for quiz in quizzes], 200
+            # 1. Create a subquery for question count and total score
+            question_stats = db.session.query(
+                Question.quiz_id,
+                func.count(Question.question_id).label('total_questions'),
+                func.sum(Question.score_points).label('total_score')
+            ).filter(Question.deleted_at.is_(None)).group_by(Question.quiz_id).subquery()
+
+            # 2. Join the Quiz query with the subquery
+            quizzes_with_stats = db.session.query(
+                Quiz,
+                question_stats.c.total_questions,
+                question_stats.c.total_score
+            ).outerjoin(
+                question_stats, Quiz.quiz_id == question_stats.c.quiz_id
+            ).filter(
+                Quiz.topic_id == topic_id,
+                Quiz.deleted_at.is_(None)
+            ).all()
+
+            # 3. Format the response data
+            results = []
+            for quiz, total_questions, total_score in quizzes_with_stats:
+                results.append({
+                    'quiz_id': quiz.quiz_id,
+                    'module_id': quiz.module_id,
+                    'topic_id': quiz.topic_id,
+                    'quiz_title': quiz.quiz_title,
+                    'duration_minutes': quiz.duration_minutes,
+                    'is_visible': quiz.is_visible,
+                    'created_at': quiz.created_at,
+                    'updated_at': quiz.updated_at,
+                    'total_questions': total_questions or 0,
+                    'total_score': int(total_score) if total_score is not None else 0
+                })
+            
+            return results, 200
+
         except Exception as e:
             abort(500, f'An unexpected error occurred: {str(e)}')
-
+        
 @quiz_ns.route('/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/quiz/create')
 class CreateQuiz(Resource):
     @quiz_ns.doc('create_quiz', description='Create a new quiz for a topic.', security='BearerAuth')
@@ -425,7 +487,7 @@ class CreateQuestion(Resource):
 
             return {
                 'question_id': new_question.question_id,
-                'quiz_id': new_quiz.quiz_id,
+                'quiz_id': new_question.quiz_id,
                 'created_by_admin_id': new_question.created_by_admin_id,
                 'question_text': new_question.question_text,
                 'option1': new_question.option1,
@@ -572,6 +634,73 @@ class DeleteQuestion(Resource):
             db.session.rollback()
             abort(500, f'An unexpected error occurred: {str(e)}')
 
+
+# --- API Endpoint ---
+@quiz_ns.route('/quiz_details/<string:access_token>')
+@quiz_ns.param('access_token', 'The access token for a specific quiz attempt.')
+class QuizDetails(Resource):
+    @quiz_ns.doc('get_quiz_details', description='Fetches all necessary details to render a quiz page for a specific attempt.', security='BearerAuth')
+    @jwt_required()
+    @quiz_ns.marshal_with(quiz_details_response_model, code=200)
+    @quiz_ns.response(401, 'Unauthorized', error_model)
+    @quiz_ns.response(403, 'Quiz attempt not accessible by this user', error_model)
+    @quiz_ns.response(404, 'Quiz attempt not found', error_model)
+    @quiz_ns.response(500, 'Unexpected error', error_model)
+    def get(self, access_token):
+        """Fetch details for a specific quiz attempt."""
+        try:
+            user_id = get_jwt_identity()
+            # 1. Find the quiz attempt using the access token
+            attempt = QuizAttempt.query.filter_by(quiz_attempt_access_token=access_token).first()
+            if not attempt:
+                abort(404, 'Quiz attempt not found.')
+            
+            # 3. Check if the quiz is already completed
+            if attempt.completed_at:
+                abort(400, 'This quiz has already been completed.')
+
+            # 4. Fetch the main quiz details
+            quiz = Quiz.query.get(attempt.quiz_id)
+            if not quiz or not quiz.is_visible or quiz.deleted_at:
+                abort(404, 'The associated quiz is no longer available.')
+
+            # 5. Fetch all questions for this quiz
+            questions = Question.query.filter_by(quiz_id=quiz.quiz_id, deleted_at=None).all()
+            
+            # 6. Fetch all *existing* answers for this attempt to pre-fill the UI
+            # This creates a dictionary for quick lookups: {question_id: selected_answer}
+            saved_answers = {
+                qa.question_id: qa.selected_answer
+                for qa in QuestionAttempt.query.filter_by(attempt_id=attempt.attempt_id).all()
+            }
+
+            # 7. Structure the response
+            response_questions = []
+            for q in questions:
+                response_questions.append({
+                    'question_id': q.question_id,
+                    'question_text': q.question_text,
+                    'option1': q.option1,
+                    'option2': q.option2,
+                    'option3': q.option3,
+                    'option4': q.option4,
+                    'score_points': q.score_points,
+                    # Look up the saved answer for this question. If not found, it will be null.
+                    'selected_answer': saved_answers.get(q.question_id)
+                })
+
+            return {
+                'quiz_title': quiz.quiz_title,
+                'duration_minutes': quiz.duration_minutes,
+                'questions': response_questions
+            }, 200
+
+        except Exception as e:
+            # It's good practice to log the actual error for debugging
+            print(f"Error in /quiz_details: {e}") 
+            abort(500, f'An unexpected error occurred: {str(e)}')
+
+
 @quiz_ns.route('/start_quiz')
 class StartQuiz(Resource):
     @quiz_ns.doc('start_quiz', description='Start a new quiz attempt.', security='BearerAuth')
@@ -666,34 +795,33 @@ class SaveAnswer(Resource):
     @quiz_ns.response(500, 'Unexpected error', error_model)
     def post(self):
         """Save or update user answer."""
+        user_id = get_jwt_identity()
+        data = quiz_ns.payload
+        # print(f"Received data: {data}, User ID: {user_id}")
+        if not data or not all(key in data for key in ['quiz_attempt_access_token', 'question_id', 'selected_answer']):
+            abort(400, 'Missing required fields')
+
+        # Fetch the quiz attempt by access token
+        attempt = QuizAttempt.query.filter_by(quiz_attempt_access_token=data['quiz_attempt_access_token']).first()
+        if not attempt:
+            abort(404, 'Quiz attempt not found')
+
+        if attempt.completed_at:
+            # print(f"Quiz attempt already completed: {attempt.completed_at}")
+            abort(403, 'Quiz attempt already completed')
+
+        # print(f"Attempt found: {attempt.quiz_attempt_access_token}, User ID: {attempt.user_id}")
+        question = Question.query.filter_by(question_id=data['question_id'], quiz_id=attempt.quiz_id, deleted_at=None).first()
+        if not question:
+            abort(404, 'Question not found')
+        
+        # print(f"Selected answer: {data['selected_answer']}, Correct answer: {question.correct_answer}")
+        if data['selected_answer'] not in [question.option1, question.option2, question.option3, question.option4]:
+            abort(400, 'Selected answer must be one of the provided options')
+        
+        # === The try block should only protect the database transaction ===
+        # print(f"Processing answer for question ID: {data['question_id']}, Selected answer: {data['selected_answer']}")
         try:
-            user_id = get_jwt_identity()
-            data = quiz_ns.payload
-            if not data or not all(key in data for key in ['quiz_attempt_access_token', 'question_id', 'selected_answer']):
-                abort(400, 'Missing required fields')
-
-            # Fetch the quiz attempt by access token
-            attempt = QuizAttempt.query.filter_by(quiz_attempt_access_token=data['quiz_attempt_access_token']).first()
-            if not attempt:
-                abort(404, 'Quiz attempt not found')
-
-            # Verify user ownership
-            if attempt.user_id != user_id:
-                abort(403, 'Unauthorized access to quiz attempt')
-
-            # Check if quiz attempt is already completed
-            if attempt.completed_at:
-                abort(403, 'Quiz attempt already completed')
-
-            # Fetch the question
-            question = Question.query.filter_by(question_id=data['question_id'], quiz_id=attempt.quiz_id, deleted_at=None).first()
-            if not question:
-                abort(404, 'Question not found')
-
-            # Validate selected answer
-            if data['selected_answer'] not in [question.option1, question.option2, question.option3, question.option4]:
-                abort(400, 'Selected answer must be one of the provided options')
-
             # Update or create question attempt
             existing_attempt = QuestionAttempt.query.filter_by(attempt_id=attempt.attempt_id, question_id=data['question_id']).first()
             if existing_attempt:
@@ -716,7 +844,6 @@ class SaveAnswer(Resource):
         except Exception as e:
             db.session.rollback()
             abort(500, f'An unexpected error occurred: {str(e)}')
-
 @quiz_ns.route('/evaluate_quiz')
 class EvaluateQuiz(Resource):
     @quiz_ns.doc('evaluate_quiz', description='Evaluate and submit quiz.', security='BearerAuth')
@@ -736,16 +863,12 @@ class EvaluateQuiz(Resource):
             attempt = QuizAttempt.query.filter_by(quiz_attempt_access_token=data['quiz_attempt_access_token']).first()
             if not attempt:
                 abort(404, 'Quiz attempt not found')
-            if attempt.user_id != user_id:
-                abort(403, 'Unauthorized access to quiz attempt')
+
             if attempt.completed_at:
                 abort(400, 'Quiz already submitted')
 
             # Validate all questions are answered
             total_questions = Question.query.filter_by(quiz_id=attempt.quiz_id, deleted_at=None).count()
-            if len(data['responses']) != total_questions:
-                abort(400, 'All questions must be answered')
-
             total_score = 0
             question_ids = set()
             for response in data['responses']:
@@ -789,7 +912,21 @@ class EvaluateQuiz(Resource):
 
             attempt.score_earned = total_score
             attempt.completed_at = get_current_ist()
-            attempt.time_taken_seconds = (attempt.completed_at - attempt.started_at).total_seconds() if attempt.completed_at and attempt.started_at else 0
+            
+            # --- CORRECTION FOR TypeError ---
+            # The original code caused a TypeError because it tried to subtract
+            # an offset-naive datetime (started_at) from an offset-aware one (completed_at).
+            # The fix is to make both datetimes naive before the subtraction,
+            # assuming they are both in the same timezone.
+            if attempt.completed_at and attempt.started_at:
+                # Convert the aware datetime to naive by removing timezone info
+                completed_at_naive = attempt.completed_at.replace(tzinfo=None)
+                # Now both datetimes are naive, so subtraction is safe
+                attempt.time_taken_seconds = (completed_at_naive - attempt.started_at).total_seconds()
+            else:
+                attempt.time_taken_seconds = 0
+            # --- END CORRECTION ---
+
             db.session.commit()
 
             return {
@@ -799,7 +936,12 @@ class EvaluateQuiz(Resource):
             }, 200
         except Exception as e:
             db.session.rollback()
+            # Log the full exception for debugging
+            print(f"Error in /evaluate_quiz: {e}")
+            import traceback
+            traceback.print_exc()
             abort(500, f'An unexpected error occurred: {str(e)}')
+
 
 # Register the namespace with the Blueprint
 quiz_ns.add_resource(QuizzesByTopic, '/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/quizzes')
@@ -810,6 +952,7 @@ quiz_ns.add_resource(QuestionsByQuiz, '/<int:lesson_id>/module/<int:module_id>/t
 quiz_ns.add_resource(CreateQuestion, '/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/quizzes/<int:quiz_id>/question/create')
 quiz_ns.add_resource(UpdateQuestion, '/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/quizzes/<int:quiz_id>/question/<int:question_id>/update')
 quiz_ns.add_resource(DeleteQuestion, '/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/quizzes/<int:quiz_id>/question/<int:question_id>/delete')
+quiz_ns.add_resource(QuizDetails, '/quiz_details/<string:access_token>')
 quiz_ns.add_resource(StartQuiz, '/start_quiz')
 quiz_ns.add_resource(SaveAnswer, '/save_answer')
 quiz_ns.add_resource(EvaluateQuiz, '/evaluate_quiz')
