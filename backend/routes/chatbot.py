@@ -81,6 +81,19 @@ chat_response_model = chatbot_ns.model('ChatResponse', {
 chat_history_model = chatbot_ns.model('ChatHistory', {
     'history': fields.List(fields.Nested(message_model), description='The user\'s chat history')
 })
+# API Model for admin stats - EXPANDED
+stats_model = chatbot_ns.model('ChatbotStats', {
+    'total_messages': fields.Integer(description='Total number of messages (user and bot).'),
+    'total_user_messages': fields.Integer(description='Total number of messages sent by users.'),
+    'total_bot_responses': fields.Integer(description='Total number of responses sent by the bot.'),
+    'unique_users_chatted': fields.Integer(description='Total number of unique users who have used the chatbot.'),
+    'premium_users_chatted': fields.Integer(description='Number of unique premium users who have used the chatbot.'),
+    'non_premium_users_chatted': fields.Integer(description='Number of unique non-premium users who have used the chatbot.'),
+    'active_users_today': fields.Integer(description='Number of unique users who used the chatbot today.'),
+    'active_users_last_7_days': fields.Integer(description='Number of unique users who used the chatbot in the last 7 days.'),
+    'avg_messages_per_user': fields.Float(description='Overall average number of messages sent per user.'),
+    'avg_messages_per_session': fields.Float(description='Overall average number of messages per chat session.')
+})
 
 @chatbot_ns.route('/send_message')
 class SendMessage(Resource):
@@ -157,7 +170,7 @@ class SendMessage(Resource):
             print(f"An error occurred while processing the message: {e}")
             chatbot_ns.abort(500, "An error occurred while processing your message.")
 
-@chatbot_ns.route('/history')
+@chatbot_ns.route('/chat_history')
 class ChatHistory(Resource):
     @chatbot_ns.doc('get_chat_history', security='BearerAuth')
     @chatbot_ns.marshal_with(chat_history_model)
@@ -179,36 +192,20 @@ class ChatHistory(Resource):
             } for msg in messages_db
         ]
         return {'history': history}
+    
 
-# --- Admin-Facing Chatbot Statistics API ---
 
-admin_chatbot_ns = Namespace('admin/chatbot', description='Admin operations for chatbot statistics')
-
-# API Model for admin stats - EXPANDED
-stats_model = admin_chatbot_ns.model('ChatbotStats', {
-    'total_messages': fields.Integer(description='Total number of messages (user and bot).'),
-    'total_user_messages': fields.Integer(description='Total number of messages sent by users.'),
-    'total_bot_responses': fields.Integer(description='Total number of responses sent by the bot.'),
-    'unique_users_chatted': fields.Integer(description='Total number of unique users who have used the chatbot.'),
-    'premium_users_chatted': fields.Integer(description='Number of unique premium users who have used the chatbot.'),
-    'non_premium_users_chatted': fields.Integer(description='Number of unique non-premium users who have used the chatbot.'),
-    'active_users_today': fields.Integer(description='Number of unique users who used the chatbot today.'),
-    'active_users_last_7_days': fields.Integer(description='Number of unique users who used the chatbot in the last 7 days.'),
-    'avg_messages_per_user': fields.Float(description='Overall average number of messages sent per user.'),
-    'avg_messages_per_session': fields.Float(description='Overall average number of messages per chat session.')
-})
-
-@admin_chatbot_ns.route('/stats')
+@chatbot_ns.route('/chatbot_stats')
 class ChatbotStats(Resource):
-    @admin_chatbot_ns.doc('get_chatbot_stats', security='BearerAuth')
-    @admin_chatbot_ns.marshal_with(stats_model)
+    @chatbot_ns.doc('get_chatbot_stats', security='BearerAuth')
+    @chatbot_ns.marshal_with(stats_model)
     @jwt_required()
     def get(self):
         """Retrieve expanded, overall statistics about chatbot usage."""
         current_user_id = get_jwt_identity()
         user = User.query.get(current_user_id)
         if not user or user.user_role != 'admin':
-            admin_chatbot_ns.abort(403, 'Admin access required to view statistics.')
+            chatbot_ns.abort(403, 'Admin access required to view statistics.')
 
         try:
             # --- Overall Message Counts ---
@@ -268,4 +265,4 @@ class ChatbotStats(Resource):
             }
         except Exception as e:
             print(f"Error fetching chatbot stats: {e}")
-            admin_chatbot_ns.abort(500, "An error occurred while fetching chatbot statistics.")
+            chatbot_ns.abort(500, "An error occurred while fetching chatbot statistics.")

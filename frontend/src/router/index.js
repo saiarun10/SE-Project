@@ -46,7 +46,7 @@ const routes = [
   { path: '/user-summary',name: 'UserSummary',component: UserSummaryView,meta: { requiresAuth: true, role: 'user' },},
   { path: '/lesson',  name: 'Lesson', component: Lesson, meta: { requiresAuth: true, role: 'user' }},
   { path: '/lesson/:id',name: 'Module',  component: Module, meta: { requiresAuth: true, role: 'user' }, props: true },
-  { path: '/lessons/:lessonId/:topicId/learn_topic',name: 'LearnTopic', component: Topic, meta: { requiresAuth: true, role: 'user' }, props: true },
+  { path: '/lesson/:lessonId/module/:moduleId/topic/:topicId',name: 'LearnTopic', component: Topic, meta: { requiresAuth: true, role: 'user' }, props: true },
   { path: '/awareness', name: 'Awareness', component: Awareness, meta: { requiresAuth: true, role: 'user' } },
   { path: '/add-expense', name: 'AddExpense', component: AddExpense, meta: { requiresAuth: true, role: 'user' } },
   { path: '/expense-interface', name: 'ExpenseInterface', component: ExpenseInterface, meta: { requiresAuth: true, role: 'user' } },

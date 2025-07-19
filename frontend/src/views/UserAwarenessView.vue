@@ -44,12 +44,13 @@
       </div>
     </div>
   </div>
-  <Footer />
+  <AppFooter />
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
 import AppFooter from '@/components/Footer.vue'
+import App from '../App.vue';
 
 export default {
   name: 'Awareness',

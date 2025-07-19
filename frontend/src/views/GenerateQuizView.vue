@@ -438,6 +438,7 @@ export default {
             headers: { Authorization: `Bearer ${this.$store.state.token}` }
           }
         );
+        console.log("quizzes data:", response.data);
         this.quizzes = response.data;
         for (const quiz of this.quizzes) {
           await this.fetchQuestionsForQuiz(quiz.quiz_id);

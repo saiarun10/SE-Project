@@ -42,7 +42,10 @@
           <li v-for="quiz in quizzes" :key="quiz.quiz_id" class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
             <div>
               <strong>{{ quiz.quiz_title }}</strong>
-              <p class="mb-0 text-muted">Duration: {{ quiz.duration_minutes }} minutes</p>
+              <p class="mb-0 text-muted small">
+                Duration: {{ quiz.duration_minutes }} min | Questions: {{ quiz.total_questions }} | Max Score: {{ quiz.total_score }}
+              </p>
+
             </div>
             <div class="mt-2 mt-md-0">
               <button class="btn btn-success btn-sm text-white" @click="startQuiz(quiz.quiz_id)" :disabled="isSubmitting">
@@ -53,7 +56,7 @@
         </ul>
       </div>
       <div v-if="recentScore !== null" class="mt-4 text-center">
-        <p class="text-lg text-black fw-semibold">Recent Score: {{ recentScore }} / {{ totalScorePossible }}</p>
+        <p class="text-lg text-black fw-semibold">Your Recent Score: {{ recentScore }}</p>
       </div>
       <ExamInterface
         v-if="showExam"
@@ -182,6 +185,7 @@ export default {
         );
         console.log('Quizzes fetched:', response.data);
         quizzes.value = Array.isArray(response.data) ? response.data.filter(quiz => quiz.is_visible) : [];
+        console.log('Filtered quizzes:', quizzes.value);
         recentScore.value = null;
         totalScorePossible.value = null;
       } catch (err) {
