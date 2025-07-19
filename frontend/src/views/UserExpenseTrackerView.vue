@@ -55,13 +55,12 @@ export default {
     const errorMessage={"value":""}
     const submitPasscode = async () => {
         try {
-            // const response = await fetch('/api/submit_passcode', {
-            // method: 'POST',
-            // headers: { 'Content-Type': 'application/json' },
-            // body: JSON.stringify({ passcode: passcode.value })
-            // });
-            // const data = await response.json();
-            const data = {"success":true}
+            const response = await fetch('/api/submit_passcode', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ passcode: passcode.value })
+            });
+            const data = await response.json();
 
             if (data.success === true) {
             router.push('/expense-interface'); // Adjust route name as defined in your router
@@ -76,9 +75,8 @@ export default {
 
     const checkPasscodeStatus = async () => {
       try {
-        // const response = await fetch('/api/get_passcode_status');
-        // const data = await response.json();
-        const data={"exists":true}
+        const response = await fetch('/api/get_passcode_status');
+        const data = await response.json();
         passcodeStatus.value = data.exists; // expects: { exists: true/false }
       } catch (err) {
         console.error('Status check error:', err);

@@ -70,12 +70,13 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue';
-import Navbar from '@/components/Navbar.vue'
-import AppFooter from '@/components/Footer.vue'
+import { ref, watch, onMounted } from 'vue';
+import axios from 'axios';
+import Navbar from '@/components/Navbar.vue';
+import AppFooter from '@/components/Footer.vue';
+
 export default {
-  name: 'AddExpense'
-  ,
+  name: 'AddExpense',
   components: {
     Navbar,
     AppFooter
@@ -103,17 +104,23 @@ export default {
       resetForm();
     });
 
-    const allCategories = [
-      'Food', 'Travel', 'Utilities', 'Entertainment', 'Health',
-      'Education', 'Job', 'Side Hustle', 'Investment', 'Misc'
-    ];
-
+    const allCategories = ref([]);  // initially empty
     const showSuggestions = ref(false);
     const filteredCategories = ref([]);
 
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('/get_all_categories');
+        allCategories.value = response.data.categories || [];  
+      } catch (error) {
+        console.error('Failed to load categories:', error);
+        allCategories.value = [];
+      }
+    };
+
     const filterSuggestions = () => {
       const input = form.value.category.toLowerCase();
-      filteredCategories.value = allCategories.filter(cat =>
+      filteredCategories.value = allCategories.value.filter(cat =>
         cat.toLowerCase().includes(input)
       );
     };
@@ -129,14 +136,25 @@ export default {
       }, 200);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       const payload = {
         ...form.value,
         type: selectedTab.value
       };
-      console.log('Sending JSON:', JSON.stringify(payload, null, 2));
-      alert(`Submitted:\n${JSON.stringify(payload, null, 2)}`);
+      try {
+        const response = await axios.post('/add_expense', payload);
+        console.log('Response:', response.data);
+        alert('Expense added successfully!');
+        resetForm();
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('Failed to add expense. Please try again.');
+      }
     };
+
+    onMounted(() => {
+      fetchCategories();
+    });
 
     return {
       selectedTab,
@@ -151,8 +169,8 @@ export default {
     };
   }
 };
-
 </script>
+
 
 <style scoped>
 .nav-link.active {
