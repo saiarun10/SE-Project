@@ -139,7 +139,7 @@
 
     
   </div>
-  <Footer />
+  <AppFooter />
 </template>
 
 <script>

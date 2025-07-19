@@ -120,7 +120,7 @@ class UserModuleProgress(db.Model):
     progress_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False, index=True)
     module_id = db.Column(db.Integer, db.ForeignKey('modules.module_id', ondelete='CASCADE'), nullable=False, index=True)
-    topic_id = db.Column(db.Integer, db.ForeignKey('topics.topic_id', ondelete='CASCADE'), nullable=True, index=True)  # Added to track topic progress
+    topic_id = db.Column(db.Integer, db.ForeignKey('topics.topic_id', ondelete='CASCADE'), nullable=True, index=True)  
     started_at = db.Column(db.DateTime, default=get_current_ist)
     completed_at = db.Column(db.DateTime)
     last_accessed_at = db.Column(db.DateTime, default=get_current_ist)

@@ -492,7 +492,6 @@ class DownloadContent(Resource):
         except Exception as e:
             abort(500, f'An unexpected error occurred: {str(e)}')
 
-# --- NEWLY ADDED ENDPOINT ---
 @topic_ns.route('/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/delete_content')
 class DeleteContent(Resource):
     @topic_ns.doc('delete_content', description='Delete the PDF content for a topic.', security='BearerAuth')
