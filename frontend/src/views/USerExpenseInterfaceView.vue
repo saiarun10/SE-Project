@@ -115,9 +115,11 @@ import AppFooter from '@/components/Footer.vue'
 import { ref, onMounted, computed, watch } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useStore } from 'vuex';
 
 Chart.register(...registerables, ChartDataLabels);
 
+const BASE_URL = `${import.meta.env.VITE_BASE_URL}/api`;
 export default {
   name: 'ExpenseInterface',
   components: {
@@ -125,6 +127,7 @@ export default {
     AppFooter
   },
   setup() {
+    const store = useStore();
     const tabs = ['Daily', 'Monthly', 'Summary'];
     const selectedTab = ref('Daily');
     const selectedMonth = ref('');
@@ -140,7 +143,8 @@ export default {
 
     const fetchAllExpenses = async () => {
       try {
-        const res = await fetch(`/api/get_all_expense`);
+        const res = await fetch(`${BASE_URL}/get_all_expense`,{
+          headers: { Authorization: `Bearer ${store.state.token}`}});
         const data = await res.json();
                       
         allTransactions.value = data.expenses || [];

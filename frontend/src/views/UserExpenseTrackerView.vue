@@ -39,8 +39,8 @@ import { ref } from 'vue';
 import Navbar from '@/components/Navbar.vue'
 import AppFooter from '@/components/Footer.vue'
 import { useRouter } from 'vue-router'
-
-
+import { useStore } from 'vuex';
+const BASE_URL = `${import.meta.env.VITE_BASE_URL}`;
 export default {
   name: 'ExpenseTracker',
   components: {
@@ -48,6 +48,7 @@ export default {
     AppFooter
   },
   setup() {
+    const store = useStore();
     const router = useRouter()
     const passcode = ref('');
     const newPasscode = ref('');
@@ -55,9 +56,9 @@ export default {
     const errorMessage={"value":""}
     const submitPasscode = async () => {
         try {
-            const response = await fetch('/api/submit_passcode', {
+            const response = await fetch(`${BASE_URL}/api/submit_passcode`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { Authorization: `Bearer ${store.state.token}`,'Content-Type': 'application/json' },
             body: JSON.stringify({ passcode: passcode.value })
             });
             const data = await response.json();
@@ -75,7 +76,9 @@ export default {
 
     const checkPasscodeStatus = async () => {
       try {
-        const response = await fetch('/api/get_passcode_status');
+        const response = await fetch(`${BASE_URL}/api/get_passcode_status`, {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${store.state.token}`,'Content-Type': 'application/json' }});
         const data = await response.json();
         passcodeStatus.value = data.exists; // expects: { exists: true/false }
       } catch (err) {
@@ -85,9 +88,9 @@ export default {
 
     const createPasscode = async () => {
       try {
-        await fetch('/api/create_passcode', {
+        await fetch(`${BASE_URL}/api/create_passcode`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {Authorization: `Bearer ${store.state.token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ passcode: newPasscode.value })
         });
         window.location.reload(); // refresh page to reset state

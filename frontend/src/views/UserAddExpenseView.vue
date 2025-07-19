@@ -74,7 +74,8 @@ import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
 import AppFooter from '@/components/Footer.vue';
-
+import { useStore } from 'vuex';
+const BASE_URL = `${import.meta.env.VITE_BASE_URL}`;
 export default {
   name: 'AddExpense',
   components: {
@@ -83,7 +84,7 @@ export default {
   },
   setup() {
     const selectedTab = ref('expense');
-
+    const store = useStore();
     const form = ref({
       date: '',
       name: '',
@@ -110,7 +111,7 @@ export default {
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('/get_all_categories');
+        const response = await axios.get(`${BASE_URL}/api/get_all_categories`);
         allCategories.value = response.data.categories || [];  
       } catch (error) {
         console.error('Failed to load categories:', error);
@@ -142,7 +143,14 @@ export default {
         type: selectedTab.value
       };
       try {
-        const response = await axios.post('/add_expense', payload);
+        const response = await axios.post(`${BASE_URL}/api/add_expense`,
+    payload, // payload is the JSON body
+    {
+        headers: {
+            Authorization: `Bearer ${store.state.token}`,
+            'Content-Type': 'application/json'
+        }
+    });
         console.log('Response:', response.data);
         alert('Expense added successfully!');
         resetForm();
