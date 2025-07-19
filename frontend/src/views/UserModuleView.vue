@@ -145,12 +145,18 @@
 <script>
 import Navbar from '@/components/Navbar.vue'
 import AppFooter from '@/components/Footer.vue'
+import Alert from '@/components/Alert.vue'
+import Calculator from '@/views/CalculatorView.vue' 
+import axios from 'axios'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Module',
   components: {
     Navbar,
     AppFooter,
+    Alert,
+    Calculator
   },
   props: ['id'],
   
@@ -162,211 +168,114 @@ export default {
       lessonId: null,
       expandedModule: null,
       showCalculator: false,
-      userName: 'Student',
-
-      
-      // All lessons data with their modules
-      lessonsData: {
-        1: {
-  id: 1,
-  title: 'Stock Market',
-  description: 'Learn the basics of stock market investing and trading strategies.',
-  icon: 'fas fa-chart-line',
-  modules: [
-        {
-          id: 1,
-          title: 'Introduction to Stock Market',
-          description: 'Understanding the basics of stock market and how it works',
-          topics: [
-            {
-              id: 1,
-              title: 'What is a Stock?',
-              description: 'Definition and importance of stocks in the financial market.',
-            },
-            {
-              id: 2,
-              title: 'How Stock Market Works',
-              description: 'Understand stock exchanges, brokers, and transactions.',
-            },
-            {
-              id: 3,
-              title: 'Why Companies Go Public',
-              description: 'Learn about IPOs and benefits of going public.',
-            },
-            {
-              id: 4,
-              title: 'Participants in the Market',
-              description: 'Who invests, trades, and regulates the market?',
-            }
-          ]
-        },
-        {
-          id: 2,
-          title: 'Types of Stocks',
-          description: 'Learn about different types of stocks and their characteristics',
-          topics: [] // You can fill similar to above
-        },
-        {
-          id: 3,
-          title: 'Trading Strategies',
-          description: 'Explore various trading strategies for beginners',
-          topics: []
-        },
-        {
-          id: 4,
-          title: 'Risk Management',
-          description: 'Learn how to manage risks in stock trading',
-          topics: []
-        }
-      ]
-    },
-
-        2: {
-          id: 2,
-          title: 'Banking Sector',
-          description: 'Understand banking services, loans, and financial institutions.',
-          icon: 'fas fa-university',
-          modules: [
-            {
-              id: 1,
-              title: 'Banking Fundamentals',
-              description: 'Introduction to banking system and its functions',
-            },
-            {
-              id: 2,
-              title: 'Types of Bank Accounts',
-              description: 'Different types of bank accounts and their features',
-            },
-            {
-              id: 3,
-              title: 'Loans and Credit',
-              description: 'Understanding different types of loans and credit facilities',
-            },
-            {
-              id: 4,
-              title: 'Banking Services',
-              description: 'Online banking, mobile banking, and other modern services',
-            }
-          ]
-        },
-        3: {
-          id: 3,
-          title: 'Budget',
-          description: 'Master personal budgeting and expense management techniques.',
-          icon: 'fas fa-calculator',
-          modules: [
-            {
-              id: 1,
-              title: 'Budget Basics',
-              description: 'Learn the fundamentals of creating a personal budget',
-            },
-            {
-              id: 2,
-              title: 'Expense Tracking',
-              description: 'Methods and tools for tracking your expenses',
-            },
-            {
-              id: 3,
-              title: 'Saving Strategies',
-              description: 'Effective strategies to save money and cut costs',
-            }
-          ]
-        },
-        4: {
-          id: 4,
-          title: 'Tax',
-          description: 'Navigate tax planning, deductions, and filing requirements.',
-          icon: 'fas fa-file-invoice-dollar',
-          modules: [
-            {
-              id: 1,
-              title: 'Tax Fundamentals',
-              description: 'Understanding the basics of taxation system',
-            },
-            {
-              id: 2,
-              title: 'Tax Deductions',
-              description: 'Learn about various tax deductions you can claim',
-            },
-            {
-              id: 3,
-              title: 'Filing Tax Returns',
-              description: 'Step-by-step guide to filing your tax returns',
-            }
-          ]
-        },
-        5: {
-          id: 5,
-          title: 'Credit & Interest',
-          description: 'Understand credit scores, interest rates, and loan management.',
-          icon: 'fas fa-credit-card',
-          modules: [
-            {
-              id: 1,
-              title: 'Understanding Credit',
-              description: 'What is credit and how does it work',
-            },
-            {
-              id: 2,
-              title: 'Credit Scores',
-              description: 'How credit scores are calculated and their importance',
-            },
-            {
-              id: 3,
-              title: 'Interest Rates',
-              description: 'Understanding different types of interest rates',
-            }
-          ]
-        },
-        6: {
-          id: 6,
-          title: 'Financial Planning',
-          description: 'Develop comprehensive financial planning and investment strategies.',
-          icon: 'fas fa-chart-pie',
-          modules: [
-            {
-              id: 1,
-              title: 'Financial Goals',
-              description: 'Setting and achieving your financial goals',
-            },
-            {
-              id: 2,
-              title: 'Investment Basics',
-              description: 'Introduction to different investment options',
-            },
-            {
-              id: 3,
-              title: 'Retirement Planning',
-              description: 'Planning for your retirement and long-term security',
-            }
-          ]
-        }
-      }
+      modules: [],
+      topics: {}, // This should be reactive in Vue 3
+      alert: { visible: false, message: '', type: '' }
     }
   },
+
+  computed: {
+    ...mapState(['user', 'token']),
+    userName() {
+      return this.user?.username || 'Student';
+    },
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    }
+  },
+  
   methods: {
     async loadLessonContent() {
       this.loading = true;
       this.error = null;
+      this.alert = { visible: false, message: '', type: '' };
       
+      if (!this.isAuthenticated) {
+        this.error = 'Please log in to view lesson content.';
+        this.alert = { visible: true, message: this.error, type: 'error' };
+        this.loading = false;
+        return;
+      }
+
       try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Get lesson data based on ID
-        const lessonData = this.lessonsData[this.lessonId];
-        
-        if (lessonData) {
-          this.currentLesson = lessonData;
-        } else {
-          this.currentLesson = null;
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${this.token}`,
+            'Content-Type': 'application/json'
+          }
+        };
+
+        // Fetch modules for this lesson
+        const modulesResponse = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/api/${this.lessonId}/modules`,
+          config
+        );
+
+        this.modules = modulesResponse.data;
+
+        if (this.modules.length === 0) {
+          this.alert = { visible: true, message: 'No modules found for this lesson.', type: 'info' };
         }
-        
+
+        // Fetch topics for each module
+        for (const module of this.modules) {
+          try {
+            const topicsResponse = await axios.get(
+              `${import.meta.env.VITE_BASE_URL}/api/${this.lessonId}/module/${module.module_id}/topics`,
+              config
+            );
+            
+            // Store topics with module_id as key (Vue 3 way)
+            this.topics[module.module_id] = topicsResponse.data;
+          } catch (topicError) {
+            console.error(`Error fetching topics for module ${module.module_id}:`, topicError);
+            this.topics[module.module_id] = [];
+          }
+        }   
+
+        // Create currentLesson object to maintain compatibility with existing template
+        this.currentLesson = {
+          id: parseInt(this.lessonId),
+          title: this.getLessonTitle(this.lessonId),
+          modules: this.modules.map(module => ({
+            id: module.module_id,
+            title: module.module_title,
+            description: module.module_description,
+            topics: (this.topics[module.module_id] || []).map(topic => ({
+              id: topic.topic_id,
+              title: topic.topic_title,
+              description: topic.topic_title,
+              hasContent: topic.has_content
+            }))
+          }))
+        };
+
+        console.log('Loaded lesson content:', {
+          lessonId: this.lessonId,
+          modulesCount: this.modules.length,
+          currentLesson: this.currentLesson
+        });
+
       } catch (err) {
-        this.error = 'Failed to load lesson content. Please try again.';
+        console.error('Error loading lesson content:', err);
+        this.error = err.response?.data?.error || 'Failed to load lesson content. Please try again.';
+        this.alert = { visible: true, message: this.error, type: 'error' };
       } finally {
         this.loading = false;
       }
+    },
+
+    // Helper method to get lesson title (you can customize this based on your needs)
+    getLessonTitle(lessonId) {
+      const lessonTitles = {
+        1: 'Stock Market',
+        2: 'Banking Sector',
+        3: 'Budget',
+        4: 'Tax',
+        5: 'Credit & Interest',
+        6: 'Financial Planning'
+      };
+      return lessonTitles[lessonId] || `Lesson ${lessonId}`;
     },
 
     openCalculator() {
@@ -377,27 +286,60 @@ export default {
       this.showCalculator = false;
     },
 
-    selectTopic(module , topic) {
+      selectTopic(module, topic) {
+      // Handle both raw database objects and mapped objects
+      const moduleId = module.id || module.module_id;
+      const topicId = topic.id || topic.topic_id;
+      
+      // If moduleId is still undefined, try to find it from the expanded module
+      const finalModuleId = moduleId || this.expandedModule;
+      
+      // Debug logging to see what we're working with
+      console.log('selectTopic called with:', {
+        module: module,
+        topic: topic,
+        moduleId: moduleId,
+        topicId: topicId
+      });
+
+      // Make sure we have all required parameters
+      if (!this.lessonId || !moduleId || !topicId) {
+        console.error('Missing required parameters for topic navigation:', {
+          lessonId: this.lessonId,
+          moduleId: finalModuleId,
+          topicId: topicId
+        });
+        this.alert = { visible: true, message: 'Missing required parameters for navigation.', type: 'error' };
+        return;
+      }
+
       this.$router.push({
         name: 'LearnTopic',
         params: {
           lessonId: this.lessonId,
-          topicId: topic.id
+          moduleId: finalModuleId,
+          topicId: topicId
         }
       });
-    },
+          },
 
-    
     selectModule(module) {
       if (module.locked) {
-        alert('This module is locked. Complete previous modules first.');
+        this.alert = { visible: true, message: 'This module is locked. Complete previous modules first.', type: 'warning' };
         return;
       }
       
       console.log('Selected module:', module.title);
-      // Here you can navigate to the specific module content
-      // this.$router.push(`/lesson/${this.lessonId}/module/${module.id}`);
+      // Navigate to the specific module content
+      this.$router.push({
+        name: 'ModuleContent',
+        params: {
+          lessonId: this.lessonId,
+          moduleId: module.id
+        }
+      });
     },
+
     toggleModule(module) {
       if (this.expandedModule === module.id) {
         this.expandedModule = null; // collapse
@@ -406,22 +348,21 @@ export default {
       }
     },
 
-    
     goBack() {
       this.$router.push('/lesson');
     }
   },
   
-  mounted() {
+  async mounted() {
     this.lessonId = this.$route.params.id;
-    console.log('Lesson ID:', this.lessonId);
-    this.loadLessonContent();
+    console.log('Module component mounted with Lesson ID:', this.lessonId);
+    await this.loadLessonContent();
   },
   
   watch: {
-    '$route.params.id'(newId) {
+    async '$route.params.id'(newId) {
       this.lessonId = newId;
-      this.loadLessonContent();
+      await this.loadLessonContent();
     }
   }
 }
