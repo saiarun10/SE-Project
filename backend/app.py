@@ -12,6 +12,7 @@ from routes.topic import topic_ns
 from routes.quiz import quiz_ns
 from routes.summary import summary_ns
 from routes.chatbot import chatbot_ns
+from routes.user_payment import user_payment_ns  # Import the user payment namespace
 from swagger_setup import configure_swagger  # Import Swagger configuration
 # Import other namespaces as needed
 # from routes.learn import learn_ns
@@ -47,6 +48,7 @@ def create_app():
     api.add_namespace(quiz_ns, path='/api')
     api.add_namespace(summary_ns, path='/api')
     api.add_namespace(chatbot_ns, path='/api')
+    api.add_namespace(user_payment_ns, path='/api')  # Register user payment namespace
     # Add other namespaces as needed
     # api.add_namespace(learn_ns, path='/api')
     # api.add_namespace(quiz_ns, path='/api')
