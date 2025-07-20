@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash
 from datetime import datetime
 
 # Define the profile namespace
-profile_ns = Namespace('profile', description='User profile operations')
+profile_ns = Namespace('profile', description="Get and update user profile details, parental control settings, and premium membership status. This module allows users to manage their profiles, set parental controls, and check premium membership status.")
 
 # Define request/response models
 profile_model = profile_ns.model('Profile', {
@@ -134,9 +134,9 @@ class Profile(Resource):
             db.session.rollback()
             abort(500, f'An unexpected error occurred: {str(e)}')
 
-@profile_ns.route('/set_parent_email')
+@profile_ns.route('/set_parent_email',)
 class ParentEmail(Resource):
-    @profile_ns.doc('set_parent_email', description='Set parent email for the user.', security='BearerAuth')
+    @profile_ns.doc('set_parent_email', description='Parental Control with proofs of being a parent and parent email and password verification .Parent can Download Reports and Analytics of the user', security='BearerAuth')
     @jwt_required()
     @profile_ns.expect(parent_email_model)
     @profile_ns.marshal_with(success_model, code=200)
@@ -146,7 +146,7 @@ class ParentEmail(Resource):
     @profile_ns.response(409, 'Parent email already set', error_model)
     @profile_ns.response(500, 'Unexpected error', error_model)
     def post(self):
-        """Set parent email for the user."""
+        """Parental Control with proofs of being a parent and parent email and password verification .Parent can Download Reports and Analytics of the user"""
         try:
             user_id = get_jwt_identity()
             user_profile = UserProfile.query.filter_by(user_id=user_id).first()
@@ -173,14 +173,14 @@ class ParentEmail(Resource):
 
 @profile_ns.route('/get_user_premium_status')
 class PremiumStatus(Resource):
-    @profile_ns.doc('get_user_premium_status', description='Check if user is premium.', security='BearerAuth')
+    @profile_ns.doc('get_user_premium_status', description='Premium User Status for the authenticated user further Analytics and Reports, Unlimited Chatbot Access', security='BearerAuth')
     @jwt_required()
     @profile_ns.marshal_with(profile_model, code=200)
     @profile_ns.response(401, 'Unauthorized: Missing or invalid token', error_model)
     @profile_ns.response(404, 'User or profile not found', error_model)
     @profile_ns.response(500, 'Unexpected error', error_model)
     def get(self):
-        """Check if user is premium."""
+        """Premium User Status for the authenticated user further Analytical Reports, Unlimited Chatbot Access"""
         try:
             user_id = get_jwt_identity()
             user = User.query.filter_by(user_id=user_id).first()

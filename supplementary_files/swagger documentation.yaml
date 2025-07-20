@@ -1,0 +1,2887 @@
+swagger: '2.0'
+basePath: /
+paths:
+  /api/add_expense:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '402':
+          description: Missing transaction details
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Missing transaction type
+          schema:
+            $ref: '#/definitions/Error'
+        '201':
+          description: Transaction created successfully
+      description: Add a transaction.
+      operationId: add_expense
+      security:
+      - BearerAuth: []
+      tags:
+      - transaction
+  /api/admin_dashboard_summary:
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/AdminDashboardSummary'
+      summary: Retrieve admin dashboard summary statistics
+      description: Retrieves key statistics for the admin dashboard.
+      operationId: get_admin_dashboard_summary
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - summary
+  /api/chat_history:
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ChatHistory'
+      summary: Retrieve the user's chat history for the current session
+      operationId: get_chat_history
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - chatbot
+  /api/chatbot_stats:
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ChatbotStats'
+      summary: Retrieve expanded, overall statistics about chatbot usage
+      operationId: get_chatbot_stats
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - chatbot
+  /api/create_passcode:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: No passcode entered
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '201':
+          description: Passcode created successfully
+      description: Create the passcode.
+      operationId: Create Passcode
+      security:
+      - BearerAuth: []
+      tags:
+      - Expense Tracker Passcode
+  /api/evaluate_quiz:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Attempt or question not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Quiz attempt not accessible
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/EvaluateQuizResponse'
+      summary: Evaluate and submit quiz
+      description: Evaluate and submit quiz.
+      operationId: evaluate_quiz
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/EvaluateQuiz'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/get_all_categories:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '202':
+          description: Success
+      description: Retrieve all transaction categories.
+      operationId: get_all_categories
+      security:
+      - BearerAuth: []
+      tags:
+      - transaction
+  /api/get_all_expense:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+      description: Retrieve all transactions.
+      operationId: get_all_transactions
+      security:
+      - BearerAuth: []
+      tags:
+      - transaction
+  /api/get_all_lessons:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Lesson'
+      description: Learn Module - Retrieve all lessons for the authenticated user.
+        Teach about the available lessons like Stock Market ,Money Management, Budgeting
+        Techniques , Financial Planning and Other Financial Literacy topics.
+      operationId: get_all_lessons
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - lesson
+  /api/get_all_modules:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Module'
+      summary: Retrieve all modules
+      description: Retrieve all modules.
+      operationId: get_all_modules
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - module
+  /api/get_all_topics:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Topic'
+      summary: Retrieve all topics
+      description: Retrieve all topics.
+      operationId: get_all_topics
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/get_passcode_status:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '202':
+          description: Status retrieved
+      description: Check if a passcode exists.
+      operationId: Check Passcode Status
+      security:
+      - BearerAuth: []
+      tags:
+      - Expense Tracker Passcode
+  /api/get_user_premium_status:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User or profile not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Profile'
+      summary: Premium User Status for the authenticated user further Analytical Reports,
+        Unlimited Chatbot Access
+      description: Premium User Status for the authenticated user further Analytics
+        and Reports, Unlimited Chatbot Access
+      operationId: get_user_premium_status
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - profile
+  /api/get_user_profile:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User or profile not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Profile'
+      summary: Retrieve user profile details
+      description: Retrieve user profile details.
+      operationId: get_user_profile
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - profile
+    put:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Invalid birth_date format or age restriction
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User or profile not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Profile'
+      summary: Update user profile details
+      description: Update user profile details.
+      operationId: update_user_profile
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/UpdateProfile'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - profile
+  /api/get_user_sessions:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Session'
+      summary: Retrieve user session history
+      description: Retrieve user session history.
+      operationId: get_user_sessions
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - profile
+  /api/lesson/{lesson_id}/module/{module_id}/topic/{topic_id}:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    get:
+      responses:
+        '200':
+          description: Success
+      operationId: get_specific_topic
+      tags:
+      - topic
+  /api/lesson/{lesson_id}/module/{module_id}/topic/{topic_id}/pdf:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    get:
+      responses:
+        '200':
+          description: Success
+      operationId: get_topic_pdf
+      tags:
+      - topic
+  /api/login:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Invalid username or password
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Missing username or password
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/LoginResponse'
+      summary: Authenticate user and generate JWT token
+      description: Authenticate user and generate JWT token.
+      operationId: login
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/Login'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      tags:
+      - auth
+  /api/logout:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: No active session found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: Deactivate user session and log out
+      description: Deactivate user session and log out.
+      operationId: logout
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - auth
+  /api/payment-create-checkout-session:
+    post:
+      responses:
+        '200':
+          description: Success
+      summary: Creates a Stripe Checkout session and returns its URL and ID
+      operationId: post_create_checkout_session
+      tags:
+      - payment
+  /api/progress/lesson/{lesson_id}/module/{module_id}/topic/{topic_id}:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    get:
+      responses:
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Resource not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Progress'
+      description: Get progress status for a specific topic.
+      operationId: get_progress
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/progress/lesson/{lesson_id}/module/{module_id}/topic/{topic_id}/complete:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    post:
+      responses:
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Resource not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Progress completed
+          schema:
+            $ref: '#/definitions/Progress'
+      description: Mark topic as completed.
+      operationId: complete_progress
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/progress/lesson/{lesson_id}/module/{module_id}/topic/{topic_id}/start:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    post:
+      responses:
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Resource not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Progress started
+          schema:
+            $ref: '#/definitions/Progress'
+      description: Mark topic as started.
+      operationId: start_progress
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/quiz_details/{access_token}:
+    parameters:
+    - in: path
+      description: The access token for a specific quiz attempt.
+      name: access_token
+      required: true
+      type: string
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Quiz attempt not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Quiz attempt not accessible by this user
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/QuizDetailsResponse'
+      summary: Fetch details for a specific quiz attempt
+      description: Fetches all necessary details to render a quiz page for a specific
+        attempt.
+      operationId: get_quiz_details
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/save_answer:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Attempt or question not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Quiz attempt not accessible
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: Save or update user answer
+      description: Save or update user answer.
+      operationId: save_answer
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/SaveAnswer'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/send_message:
+    post:
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ChatResponse'
+      summary: Send a message to the chatbot and get a reply
+      operationId: send_message
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/ChatRequest'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - chatbot
+  /api/set_parent_email:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Parent email already set
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User or profile not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: 'Parental Control with proofs of being a parent and parent email and
+        password verification '
+      description: 'Parental Control with proofs of being a parent and parent email
+        and password verification .Parent can Download Reports and Analytics of the
+        user
+
+        Parent can Download Reports and Analytics of the user'
+      operationId: set_parent_email
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/ParentEmail'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - profile
+  /api/signup:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: Invalid birth_date format or age restriction
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Email or username already exists
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Missing required fields
+          schema:
+            $ref: '#/definitions/Error'
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/User'
+      summary: Register a new user
+      description: Register a new user with email, username, and profile details.
+      operationId: signup
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/Signup'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      tags:
+      - auth
+  /api/start_quiz:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Quiz, topic, module, or lesson not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Quiz not accessible
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/StartQuizResponse'
+      summary: Start a new quiz attempt
+      description: Start a new quiz attempt.
+      operationId: start_quiz
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/StartQuiz'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/submit_passcode:
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: No passcode entered
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: No passcode found
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+      description: Submit the passcode.
+      operationId: Submit Passcode
+      security:
+      - BearerAuth: []
+      tags:
+      - Expense Tracker Passcode
+  /api/user-premium-status:
+    get:
+      responses:
+        '200':
+          description: Success
+      summary: Gets the premium status of the current user
+      operationId: get_user_status
+      tags:
+      - payment
+  /api/user-reports/{report_type}:
+    parameters:
+    - in: path
+      description: The type of report to generate (analytics or chatbot)
+      name: report_type
+      required: true
+      type: string
+    get:
+      responses:
+        '200':
+          description: Success
+      summary: Generates and returns a user report as a downloadable CSV file
+      operationId: get_user_report
+      parameters:
+      - description: Time period (1d, 7d, 30d, all)
+        name: period
+        type: string
+        in: query
+      security:
+      - BearerAuth: []
+      tags:
+      - summary
+  /api/user-summary:
+    get:
+      responses:
+        '200':
+          description: Success
+      summary: Fetches a comprehensive summary for the logged-in user
+      operationId: get_user_summary
+      security:
+      - BearerAuth: []
+      tags:
+      - summary
+  /api/validate-token:
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/User'
+      summary: Validate JWT token and return user details
+      description: Validate JWT token and return user details.
+      operationId: validate_token
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - auth
+  /api/verify-parent-password:
+    post:
+      responses:
+        '200':
+          description: Success
+      summary: Verifies the parent's password for the logged-in user
+      operationId: verify_parent_password
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/ParentPassword'
+      security:
+      - BearerAuth: []
+      tags:
+      - summary
+  /api/verify-payment:
+    post:
+      responses:
+        '200':
+          description: Success
+      summary: Verifies a Stripe payment session and updates the user's premium status
+      operationId: post_verify_payment
+      parameters:
+      - name: session_id
+        in: query
+        type: string
+        required: true
+        description: Stripe Checkout Session ID is required
+      tags:
+      - payment
+  /api/{lesson_id}/module/create:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/Module'
+      summary: Create a new module
+      description: Create a new module.
+      operationId: create_module
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/CreateModule'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - module
+  /api/{lesson_id}/module/{module_id}/delete:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    delete:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson or module not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: Delete a module (soft delete)
+      description: Delete a module (soft delete).
+      operationId: delete_module
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - module
+  /api/{lesson_id}/module/{module_id}/topic/create:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson or module not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/Topic'
+      summary: Create a new topic
+      description: Create a new topic.
+      operationId: create_topic
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/CreateTopic'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/delete:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    delete:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, or topic not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: Delete a topic (soft delete)
+      description: Delete a topic (soft delete).
+      operationId: delete_topic
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/delete_content:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    delete:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, or topic not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: Delete the PDF content for a topic
+      description: Delete the PDF content for a topic.
+      operationId: delete_content
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/download_content:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, topic, or content not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: PDF content
+      summary: Download PDF content for a topic
+      description: Download PDF content for a topic.
+      operationId: download_content
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/quiz/create:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, or topic not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/Quiz'
+      summary: Create a new quiz for a topic
+      description: Create a new quiz for a topic.
+      operationId: create_quiz
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/CreateQuiz'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/quizzes:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, or topic not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuizWithStats'
+      summary: Retrieve all quizzes for a specific topic with question count and total
+        score
+      description: Retrieve all quizzes for a specific topic with question count and
+        total score.
+      operationId: get_quizzes_by_topic
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/quizzes/{quiz_id}/delete:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    - name: quiz_id
+      in: path
+      required: true
+      type: integer
+    delete:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, topic, or quiz not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: Delete a quiz (soft delete)
+      description: Delete a quiz (soft delete).
+      operationId: delete_quiz
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/quizzes/{quiz_id}/question/create:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    - name: quiz_id
+      in: path
+      required: true
+      type: integer
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, topic, or quiz not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/Question'
+      summary: Create a new question for a quiz
+      description: Create a new question for a quiz.
+      operationId: create_question
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/CreateQuestion'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/quizzes/{quiz_id}/question/{question_id}/delete:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    - name: quiz_id
+      in: path
+      required: true
+      type: integer
+    - name: question_id
+      in: path
+      required: true
+      type: integer
+    delete:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, topic, quiz, or question not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: Delete a question (soft delete)
+      description: Delete a question (soft delete).
+      operationId: delete_question
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/quizzes/{quiz_id}/question/{question_id}/update:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    - name: quiz_id
+      in: path
+      required: true
+      type: integer
+    - name: question_id
+      in: path
+      required: true
+      type: integer
+    put:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, topic, quiz, or question not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Question'
+      summary: Update a question
+      description: Update a question.
+      operationId: update_question
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/UpdateQuestion'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/quizzes/{quiz_id}/questions:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    - name: quiz_id
+      in: path
+      required: true
+      type: integer
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, topic, or quiz not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: User not found or access denied
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Question'
+      summary: Retrieve all questions for a specific quiz
+      description: Retrieve all questions for a specific quiz.
+      operationId: get_questions_by_quiz
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/quizzes/{quiz_id}/visibility:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    - name: quiz_id
+      in: path
+      required: true
+      type: integer
+    put:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, topic, or quiz not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Quiz'
+      summary: Update quiz visibility
+      description: Update quiz visibility.
+      operationId: update_quiz_visibility
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - quiz
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/update:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    put:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, or topic not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Topic'
+      summary: Update a topic
+      description: Update a topic.
+      operationId: update_topic
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/UpdateTopic'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/update_content:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, or topic not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input or non-PDF file
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: Update PDF content for a topic
+      description: Update PDF content for a topic.
+      operationId: update_content
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/UploadContent'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/{lesson_id}/module/{module_id}/topic/{topic_id}/upload_content:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    - name: topic_id
+      in: path
+      required: true
+      type: integer
+    post:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson, module, or topic not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '400':
+          description: Invalid input or non-PDF file
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
+      summary: Upload PDF content for a topic
+      description: Upload PDF content for a topic.
+      operationId: upload_content
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/UploadContent'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/{lesson_id}/module/{module_id}/topics:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson or module not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Topic'
+      summary: Retrieve all topics for a specific lesson and module
+      description: Retrieve all topics for a specific lesson and module.
+      operationId: get_topics_by_lesson_and_module
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - topic
+  /api/{lesson_id}/module/{module_id}/update:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    - name: module_id
+      in: path
+      required: true
+      type: integer
+    put:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson or module not found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Module'
+      summary: Update a module
+      description: Update a module.
+      operationId: update_module
+      parameters:
+      - name: payload
+        required: true
+        in: body
+        schema:
+          $ref: '#/definitions/UpdateModule'
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - module
+  /api/{lesson_id}/modules:
+    parameters:
+    - name: lesson_id
+      in: path
+      required: true
+      type: integer
+    get:
+      responses:
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Lesson not found
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Missing or invalid token'
+          schema:
+            $ref: '#/definitions/Error'
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Module'
+      summary: Retrieve all modules for a specific lesson
+      description: Retrieve all modules for a specific lesson.
+      operationId: get_modules_by_lesson
+      parameters:
+      - name: X-Fields
+        in: header
+        type: string
+        format: mask
+        description: An optional fields mask
+      security:
+      - BearerAuth: []
+      tags:
+      - module
+info:
+  title: GrowUp Richie Swagger API Documentation
+  version: '1.0'
+  description: API for a financial literacy app for children aged 8-14
+produces:
+- application/json
+consumes:
+- application/json
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: Enter your JWT token with the `Bearer ` prefix, e.g., "Bearer <your_token>"
+security:
+- BearerAuth: []
+tags:
+- name: auth
+  description: JWT based Authentication operations (User Signup, Login, Logout, Validate
+    JWT Token). This module allows users to register, log in, log out, and validate
+    their JWT tokens. It also includes admin and user profile management and premium
+    membership status checks.
+- name: profile
+  description: Get and update user profile details, parental control settings, and
+    premium membership status. This module allows users to manage their profiles,
+    set parental controls, and check premium membership status.
+- name: lesson
+  description: Lesson operations (Learn Module/Admin Module - Teach about so many
+    fundamental topics like Stock Market ,Money Management, Budgeting Techniques ,
+    Financial Planning and Other Financial Literacy topics.)
+- name: module
+  description: Module operations  (Learn Module/Admin Module - Teach about the  so
+    many fundamental topics like Stock Market ,Money Management, Budgeting Techniques
+    , Financial Planning and Other Financial Literacy topics.)
+- name: topic
+  description: Topic operations  (Learn Module/Admin Module - Teach about so many
+    fundamental topics like Stock Market ,Money Management, Budgeting Techniques ,
+    Financial Planning and Other Financial Literacy topics.)
+- name: quiz
+  description: Quiz operations (Quiz Module - Test your knowledge on various topics
+    like Stock Market, Money Management, Budgeting Techniques, Financial Planning,
+    and other Financial Literacy topics. Check what Users learn in this Financial
+    Literacy App)
+- name: summary
+  description: Access detailed analytical reports or chatbot interaction history,
+    including comprehensive user engagement summaries with graphical illustrations.
+    Report access can be restricted through parental verification where applicable.
+- name: chatbot
+  description: AI Driven Modern Chatbot for Financial Literacy - Interact with a friendly
+    AI chatbot to learn about financial concepts, ask questions, and get personalized
+    advice on topics like saving, budgeting, and investing.
+- name: Expense Tracker Passcode
+  description: A dashboard which has the facility to record daily expenditure and
+    plot the segments of expenses learn to keep record of expenses, with the ability
+    to add, retrieve, and categorize transactions. This also includes a passcode feature
+    for premium users.
+- name: transaction
+  description: A dashboard which has the facility to record daily expenditure and
+    plot the segments of expenses learn to keep record of expenses, with the ability
+    to add, retrieve, and categorize transactions.
+- name: payment
+  description: Get the Premium Membership for This Financial Literacy App. This module
+    allows users to create a Stripe Checkout session for premium membership and verify
+    payment status.
+definitions:
+  Signup:
+    required:
+    - birth_date
+    - email
+    - gender
+    - password
+    - username
+    properties:
+      email:
+        type: string
+        description: User email address
+      username:
+        type: string
+        description: Unique username
+      password:
+        type: string
+        description: User password
+      birth_date:
+        type: string
+        description: Birth date in YYYY-MM-DD format
+      gender:
+        type: string
+        description: User gender
+        example: male
+        enum:
+        - male
+        - female
+        - other
+      full_name:
+        type: string
+        description: Full name of the user
+      parent_email:
+        type: string
+        description: Parent email address (optional)
+    type: object
+  Error:
+    properties:
+      error:
+        type: string
+        description: Error message
+    type: object
+  User:
+    properties:
+      user_id:
+        type: integer
+        description: User ID
+      email:
+        type: string
+        description: User email
+      username:
+        type: string
+        description: Username
+      user_role:
+        type: string
+        description: User role
+      parent_email:
+        type: string
+        description: Parent email
+      is_premium_user:
+        type: boolean
+        description: Premium user status
+    type: object
+  Login:
+    required:
+    - password
+    - username
+    properties:
+      username:
+        type: string
+        description: Username
+      password:
+        type: string
+        description: Password
+    type: object
+  LoginResponse:
+    properties:
+      message:
+        type: string
+        description: Response message
+      access_token:
+        type: string
+        description: JWT access token
+      user:
+        description: User details
+        allOf:
+        - $ref: '#/definitions/User'
+    type: object
+  Success:
+    properties:
+      message:
+        type: string
+        description: Success message
+    type: object
+  UpdateProfile:
+    properties:
+      full_name:
+        type: string
+        description: Full name of the user
+      gender:
+        type: string
+        description: User gender
+        example: male
+        enum:
+        - male
+        - female
+        - other
+      birth_date:
+        type: string
+        description: Birth date in YYYY-MM-DD format
+    type: object
+  Profile:
+    properties:
+      user_id:
+        type: integer
+        description: User ID
+      email:
+        type: string
+        description: User email
+      username:
+        type: string
+        description: Username
+      full_name:
+        type: string
+        description: Full name of the user
+      gender:
+        type: string
+        description: User gender
+        example: male
+        enum:
+        - male
+        - female
+        - other
+      birth_date:
+        type: string
+        description: Birth date in YYYY-MM-DD format
+      parent_email:
+        type: string
+        description: Parent email address
+      is_premium_user:
+        type: boolean
+        description: Premium user status
+      created_at:
+        type: string
+        format: date-time
+        description: Date of joining
+    type: object
+  ParentEmail:
+    required:
+    - parent_email
+    - parent_password
+    properties:
+      parent_email:
+        type: string
+        description: Parent email address
+      parent_password:
+        type: string
+        description: Parent account password
+    type: object
+  Session:
+    properties:
+      session_id:
+        type: integer
+        description: Session ID
+      login_at:
+        type: string
+        format: date-time
+        description: Login time
+      logout_at:
+        type: string
+        format: date-time
+        description: Logout time
+      session_duration_seconds:
+        type: integer
+        description: Session duration in seconds
+    type: object
+  Lesson:
+    properties:
+      lesson_id:
+        type: integer
+        description: Lesson ID
+      lesson_name:
+        type: string
+        description: Lesson name
+      lesson_description:
+        type: string
+        description: Lesson description
+      created_at:
+        type: string
+        format: date-time
+        description: Creation date
+      updated_at:
+        type: string
+        format: date-time
+        description: Last updated date
+    type: object
+  Module:
+    properties:
+      module_id:
+        type: integer
+        description: Module ID
+      lesson_id:
+        type: integer
+        description: Lesson ID
+      created_by_admin_id:
+        type: integer
+        description: Admin ID who created the module
+      module_title:
+        type: string
+        description: Module title
+      module_description:
+        type: string
+        description: Module description
+      created_at:
+        type: string
+        format: date-time
+        description: Creation date
+      updated_at:
+        type: string
+        format: date-time
+        description: Last updated date
+    type: object
+  CreateModule:
+    required:
+    - module_title
+    properties:
+      module_title:
+        type: string
+        description: Module title
+      module_description:
+        type: string
+        description: Module description
+    type: object
+  UpdateModule:
+    properties:
+      module_title:
+        type: string
+        description: Module title
+      module_description:
+        type: string
+        description: Module description
+    type: object
+  Topic:
+    properties:
+      topic_id:
+        type: integer
+        description: Topic ID
+      module_id:
+        type: integer
+        description: Module ID
+      created_by_admin_id:
+        type: integer
+        description: Admin ID who created the topic
+      topic_title:
+        type: string
+        description: Topic title
+      has_content:
+        type: boolean
+        description: Indicates if topic has uploaded content
+      created_at:
+        type: string
+        format: date-time
+        description: Creation date
+      updated_at:
+        type: string
+        format: date-time
+        description: Last updated date
+    type: object
+  Progress:
+    properties:
+      progress_id:
+        type: integer
+      user_id:
+        type: integer
+      module_id:
+        type: integer
+      topic_id:
+        type: integer
+      started_at:
+        type: string
+        format: date-time
+      completed_at:
+        type: string
+        format: date-time
+      last_accessed_at:
+        type: string
+        format: date-time
+      progress_percentage:
+        type: integer
+    type: object
+  CreateTopic:
+    required:
+    - topic_title
+    properties:
+      topic_title:
+        type: string
+        description: Topic title
+    type: object
+  UpdateTopic:
+    properties:
+      topic_title:
+        type: string
+        description: Topic title
+    type: object
+  UploadContent:
+    properties:
+      content_file:
+        type: object
+        description: Uploaded PDF file
+    type: object
+  QuizWithStats:
+    properties:
+      quiz_id:
+        type: integer
+        description: Quiz ID
+      module_id:
+        type: integer
+        description: Module ID
+      topic_id:
+        type: integer
+        description: Topic ID
+      quiz_title:
+        type: string
+        description: Quiz title
+      duration_minutes:
+        type: integer
+        description: Quiz duration in minutes
+      is_visible:
+        type: boolean
+        description: Quiz visibility status
+      created_at:
+        type: string
+        format: date-time
+        description: Creation date
+      updated_at:
+        type: string
+        format: date-time
+        description: Last updated date
+      total_questions:
+        type: integer
+        description: Total number of questions in the quiz
+      total_score:
+        type: integer
+        description: Total score possible for the quiz
+    type: object
+  CreateQuiz:
+    required:
+    - duration_minutes
+    - quiz_title
+    properties:
+      quiz_title:
+        type: string
+        description: Quiz title
+      duration_minutes:
+        type: integer
+        description: Quiz duration in minutes
+    type: object
+  Quiz:
+    properties:
+      quiz_id:
+        type: integer
+        description: Quiz ID
+      module_id:
+        type: integer
+        description: Module ID
+      topic_id:
+        type: integer
+        description: Topic ID
+      created_by_admin_id:
+        type: integer
+        description: Admin ID who created the quiz
+      quiz_title:
+        type: string
+        description: Quiz title
+      duration_minutes:
+        type: integer
+        description: Quiz duration in minutes
+      is_visible:
+        type: boolean
+        description: Quiz visibility status
+      created_at:
+        type: string
+        format: date-time
+        description: Creation date
+      updated_at:
+        type: string
+        format: date-time
+        description: Last updated date
+    type: object
+  Question:
+    properties:
+      question_id:
+        type: integer
+        description: Question ID
+      quiz_id:
+        type: integer
+        description: Quiz ID
+      created_by_admin_id:
+        type: integer
+        description: Admin ID who created the question
+      question_text:
+        type: string
+        description: Question text
+      option1:
+        type: string
+        description: Option 1
+      option2:
+        type: string
+        description: Option 2
+      option3:
+        type: string
+        description: Option 3
+      option4:
+        type: string
+        description: Option 4
+      correct_answer:
+        type: string
+        description: Correct answer
+      score_points:
+        type: integer
+        description: Score points
+      created_at:
+        type: string
+        format: date-time
+        description: Creation date
+      updated_at:
+        type: string
+        format: date-time
+        description: Last updated date
+    type: object
+  CreateQuestion:
+    required:
+    - correct_answer
+    - option1
+    - option2
+    - option3
+    - option4
+    - question_text
+    properties:
+      question_text:
+        type: string
+        description: Question text
+      option1:
+        type: string
+        description: Option 1
+      option2:
+        type: string
+        description: Option 2
+      option3:
+        type: string
+        description: Option 3
+      option4:
+        type: string
+        description: Option 4
+      correct_answer:
+        type: string
+        description: Correct answer
+      score_points:
+        type: integer
+        description: Score points
+        default: 1
+    type: object
+  UpdateQuestion:
+    properties:
+      question_text:
+        type: string
+        description: Question text
+      option1:
+        type: string
+        description: Option 1
+      option2:
+        type: string
+        description: Option 2
+      option3:
+        type: string
+        description: Option 3
+      option4:
+        type: string
+        description: Option 4
+      correct_answer:
+        type: string
+        description: Correct answer
+      score_points:
+        type: integer
+        description: Score points
+    type: object
+  QuizDetailsResponse:
+    properties:
+      quiz_title:
+        type: string
+      duration_minutes:
+        type: integer
+      questions:
+        type: array
+        items:
+          $ref: '#/definitions/QuestionDetails'
+    type: object
+  QuestionDetails:
+    properties:
+      question_id:
+        type: integer
+      question_text:
+        type: string
+      option1:
+        type: string
+      option2:
+        type: string
+      option3:
+        type: string
+      option4:
+        type: string
+      score_points:
+        type: integer
+      selected_answer:
+        type: string
+        description: The user's previously saved answer for this question, if any.
+    type: object
+  StartQuiz:
+    required:
+    - quiz_id
+    properties:
+      quiz_id:
+        type: integer
+        description: Quiz ID
+    type: object
+  StartQuizResponse:
+    properties:
+      message:
+        type: string
+        description: Success message
+      quiz_attempt_access_token:
+        type: string
+        description: Quiz attempt access token
+      total_questions:
+        type: integer
+        description: Total number of questions in the quiz
+    type: object
+  SaveAnswer:
+    required:
+    - question_id
+    - quiz_attempt_access_token
+    - selected_answer
+    properties:
+      quiz_attempt_access_token:
+        type: string
+        description: Quiz attempt access token
+      question_id:
+        type: integer
+        description: Question ID
+      selected_answer:
+        type: string
+        description: Selected answer
+    type: object
+  EvaluateQuiz:
+    required:
+    - quiz_attempt_access_token
+    properties:
+      quiz_attempt_access_token:
+        type: string
+        description: Quiz attempt access token
+      responses:
+        type: array
+        items:
+          $ref: '#/definitions/Response'
+    type: object
+  Response:
+    required:
+    - question_id
+    - selected_option
+    properties:
+      question_id:
+        type: integer
+        description: Question ID
+      selected_option:
+        type: string
+        description: Selected option
+    type: object
+  EvaluateQuizResponse:
+    properties:
+      score:
+        type: number
+        description: Earned score
+      total_score_possible:
+        type: number
+        description: Total possible score
+      message:
+        type: string
+        description: Success message
+    type: object
+  AdminDashboardSummary:
+    properties:
+      total_users:
+        type: integer
+        description: Total number of registered users
+      daily_active_users:
+        type: integer
+        description: Number of unique users active today
+      avg_session_duration:
+        type: string
+        description: Average session duration of all completed sessions in minutes
+      avg_quiz_score:
+        type: string
+        description: Average quiz score as a percentage
+      avg_quiz_time:
+        type: string
+        description: Average time taken for quizzes in minutes
+      total_quizzes:
+        type: integer
+        description: Total number of available quizzes
+    type: object
+  ParentPassword:
+    required:
+    - password
+    properties:
+      password:
+        type: string
+        description: Parent password for verification
+    type: object
+  ChatRequest:
+    required:
+    - message
+    properties:
+      message:
+        type: string
+        description: The user's message to the chatbot
+    type: object
+  ChatResponse:
+    properties:
+      reply:
+        description: The bot's reply
+        allOf:
+        - $ref: '#/definitions/Message'
+    type: object
+  Message:
+    properties:
+      sender:
+        type: string
+        description: Who sent the message ('user' or 'bot')
+      text:
+        type: string
+        description: The content of the message
+      timestamp:
+        type: string
+        description: The time the message was sent
+    type: object
+  ChatHistory:
+    properties:
+      history:
+        type: array
+        description: The user's chat history
+        items:
+          $ref: '#/definitions/Message'
+    type: object
+  ChatbotStats:
+    properties:
+      total_messages:
+        type: integer
+        description: Total number of messages (user and bot).
+      total_user_messages:
+        type: integer
+        description: Total number of messages sent by users.
+      total_bot_responses:
+        type: integer
+        description: Total number of responses sent by the bot.
+      unique_users_chatted:
+        type: integer
+        description: Total number of unique users who have used the chatbot.
+      premium_users_chatted:
+        type: integer
+        description: Number of unique premium users who have used the chatbot.
+      non_premium_users_chatted:
+        type: integer
+        description: Number of unique non-premium users who have used the chatbot.
+      active_users_today:
+        type: integer
+        description: Number of unique users who used the chatbot today.
+      active_users_last_7_days:
+        type: integer
+        description: Number of unique users who used the chatbot in the last 7 days.
+      avg_messages_per_user:
+        type: number
+        description: Overall average number of messages sent per user.
+      avg_messages_per_session:
+        type: number
+        description: Overall average number of messages per chat session.
+    type: object
+responses:
+  ParseError:
+    description: When a mask can't be parsed
+  MaskError:
+    description: When any error occurs on mask

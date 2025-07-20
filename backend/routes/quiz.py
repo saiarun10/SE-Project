@@ -11,7 +11,7 @@ from sqlalchemy.sql import func
 quiz_bp = Blueprint('quiz', __name__)
 
 # Define the quiz namespace
-quiz_ns = Namespace('quiz', description='Quiz operations')
+quiz_ns = Namespace('quiz', description='Quiz operations (Quiz Module - Test your knowledge on various topics like Stock Market, Money Management, Budgeting Techniques, Financial Planning, and other Financial Literacy topics. Check what Users learn in this Financial Literacy App)')
 
 # Define request/response models
 quiz_model = quiz_ns.model('Quiz', {

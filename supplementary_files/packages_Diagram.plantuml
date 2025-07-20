@@ -6,6 +6,10 @@ package "routes" as routes {
 }
 package "routes.auth" as routes.auth {
 }
+package "routes.chatbot" as routes.chatbot {
+}
+package "routes.expense" as routes.expense {
+}
 package "routes.lesson" as routes.lesson {
 }
 package "routes.module" as routes.module {
@@ -14,12 +18,20 @@ package "routes.profile" as routes.profile {
 }
 package "routes.quiz" as routes.quiz {
 }
+package "routes.summary" as routes.summary {
+}
 package "routes.topic" as routes.topic {
 }
+package "routes.user_payment" as routes.user_payment {
+}
 routes.auth --> model
+routes.chatbot --> model
+routes.expense --> model
 routes.lesson --> model
 routes.module --> model
 routes.profile --> model
 routes.quiz --> model
+routes.summary --> model
 routes.topic --> model
+routes.user_payment --> model
 @enduml

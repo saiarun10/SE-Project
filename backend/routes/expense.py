@@ -6,8 +6,8 @@ from api_utils import get_current_ist
 from datetime import datetime
 
 # Define the transaction namespace
-transaction_ns = Namespace('transaction', description='Transaction operations')
-passcode_ns = Namespace('Expense Tracker Passcode', description='Create and verify passcode for expense dashboard')
+transaction_ns = Namespace('transaction', description='A dashboard which has the facility to record daily expenditure and plot the segments of expenses learn to keep record of expenses, with the ability to add, retrieve, and categorize transactions.')
+passcode_ns = Namespace('Expense Tracker Passcode', description='A dashboard which has the facility to record daily expenditure and plot the segments of expenses learn to keep record of expenses, with the ability to add, retrieve, and categorize transactions. This also includes a passcode feature for premium users.')
 
 create_passcode_model = passcode_ns.model('CreatePasscode', {
     'user_id': fields.Integer(description='User ID'),

@@ -1,5 +1,14 @@
 @startuml classes_Diagram
 set namespaceSeparator none
+class "AdminDashboardSummary" as routes.summary.AdminDashboardSummary {
+  get()
+}
+class "Categories" as routes.expense.Categories {
+  get()
+}
+class "ChatHistory" as routes.chatbot.ChatHistory {
+  get()
+}
 class "ChatbotMessage" as model.ChatbotMessage {
   chat_id
   message_content
@@ -8,8 +17,23 @@ class "ChatbotMessage" as model.ChatbotMessage {
   session_id
   user_id
 }
+class "ChatbotStats" as routes.chatbot.ChatbotStats {
+  get()
+}
+class "CheckPasscode" as routes.expense.CheckPasscode {
+  get()
+}
+class "CompleteProgress" as routes.topic.CompleteProgress {
+  post(lesson_id, module_id, topic_id)
+}
+class "CreateCheckoutSession" as routes.user_payment.CreateCheckoutSession {
+  post()
+}
 class "CreateModule" as routes.module.CreateModule {
   post(lesson_id)
+}
+class "CreatePasscode" as routes.expense.CreatePasscode {
+  post()
 }
 class "CreateQuestion" as routes.quiz.CreateQuestion {
   post(lesson_id, module_id, topic_id, quiz_id)
@@ -19,6 +43,12 @@ class "CreateQuiz" as routes.quiz.CreateQuiz {
 }
 class "CreateTopic" as routes.topic.CreateTopic {
   post(lesson_id, module_id)
+}
+class "CreateTransaction" as routes.expense.CreateTransaction {
+  post()
+}
+class "DeleteContent" as routes.topic.DeleteContent {
+  delete(lesson_id, module_id, topic_id)
 }
 class "DeleteModule" as routes.module.DeleteModule {
   delete(lesson_id, module_id)
@@ -37,6 +67,10 @@ class "DownloadContent" as routes.topic.DownloadContent {
 }
 class "EvaluateQuiz" as routes.quiz.EvaluateQuiz {
   post()
+}
+class "GroqLangChainService" as routes.chatbot.GroqLangChainService {
+  chat_model : ChatGroq
+  get_chat_response(chat_history, user_message)
 }
 class "Lesson" as model.Lesson {
   created_at
@@ -76,12 +110,18 @@ class "ModulesByLesson" as routes.module.ModulesByLesson {
 class "ParentEmail" as routes.profile.ParentEmail {
   post()
 }
+class "ParentPasswordVerification" as routes.summary.ParentPasswordVerification {
+  post()
+}
 class "PremiumStatus" as routes.profile.PremiumStatus {
   get()
 }
 class "Profile" as routes.profile.Profile {
   get()
   put()
+}
+class "ProgressStatus" as routes.topic.ProgressStatus {
+  get(lesson_id, module_id, topic_id)
 }
 class "Question" as model.Question {
   correct_answer
@@ -142,10 +182,16 @@ class "QuizAttempt" as model.QuizAttempt {
   total_score_possible
   user_id
 }
+class "QuizDetails" as routes.quiz.QuizDetails {
+  get(access_token)
+}
 class "QuizzesByTopic" as routes.quiz.QuizzesByTopic {
   get(lesson_id, module_id, topic_id)
 }
 class "SaveAnswer" as routes.quiz.SaveAnswer {
+  post()
+}
+class "SendMessage" as routes.chatbot.SendMessage {
   post()
 }
 class "Sessions" as routes.profile.Sessions {
@@ -153,6 +199,12 @@ class "Sessions" as routes.profile.Sessions {
 }
 class "Signup" as routes.auth.Signup {
   post()
+}
+class "SpecificTopic" as routes.topic.SpecificTopic {
+  get(lesson_id, module_id, topic_id)
+}
+class "StartProgress" as routes.topic.StartProgress {
+  post(lesson_id, module_id, topic_id)
 }
 class "StartQuiz" as routes.quiz.StartQuiz {
   post()
@@ -176,6 +228,9 @@ class "StoryInteraction" as model.StoryInteraction {
   user_id
   viewed_at
 }
+class "SubmitPasscode" as routes.expense.SubmitPasscode {
+  post()
+}
 class "Topic" as model.Topic {
   created_at
   created_by_admin_id
@@ -187,6 +242,9 @@ class "Topic" as model.Topic {
   topic_id
   topic_title
   updated_at
+}
+class "TopicPDF" as routes.topic.TopicPDF {
+  get(lesson_id, module_id, topic_id)
 }
 class "Topics" as routes.topic.Topics {
   get()
@@ -203,6 +261,9 @@ class "Transaction" as model.Transaction {
   transaction_name
   transaction_type
   user_id
+}
+class "Transactions" as routes.expense.Transactions {
+  get()
 }
 class "UpdateContent" as routes.topic.UpdateContent {
   post(lesson_id, module_id, topic_id)
@@ -268,6 +329,9 @@ class "UserProfile" as model.UserProfile {
   user_id
   validate_age()
 }
+class "UserReports" as routes.summary.UserReports {
+  get(report_type)
+}
 class "UserSession" as model.UserSession {
   chatbot_messages
   is_active
@@ -278,7 +342,16 @@ class "UserSession" as model.UserSession {
   session_token
   user_id
 }
+class "UserStatus" as routes.user_payment.UserStatus {
+  get()
+}
+class "UserSummary" as routes.summary.UserSummary {
+  get()
+}
 class "ValidateToken" as routes.auth.ValidateToken {
   get()
+}
+class "VerifyPayment" as routes.user_payment.VerifyPayment {
+  post()
 }
 @enduml

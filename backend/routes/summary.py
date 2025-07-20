@@ -12,7 +12,7 @@ from model import db, User, UserProfile, UserSession, QuizAttempt, Quiz, UserMod
 from api_utils import get_current_ist
 
 # --- Namespace Definition ---
-summary_ns = Namespace('summary', description='Admin and User summary and report operations')
+summary_ns = Namespace('summary', description='Access detailed analytical reports or chatbot interaction history, including comprehensive user engagement summaries with graphical illustrations. Report access can be restricted through parental verification where applicable.')
 
 
 # --- Helper function to generate CSV response ---
@@ -156,13 +156,17 @@ class UserSummary(Resource):
             'averageScore': round(quiz_stats_query[1] or 0, 1),
             'totalTime': round(quiz_time_sec / 60)
         }
-
-        # Learning Stats
         learning_stats = {
-            'modulesCompleted': UserModuleProgress.query.filter_by(user_id=user_id, completed_at=db.not_(None)).distinct(UserModuleProgress.module_id).count(),
-            'topicsLearned': UserModuleProgress.query.filter_by(user_id=user_id, completed_at=db.not_(None)).distinct(UserModuleProgress.topic_id).count()
+            'modulesCompleted': UserModuleProgress.query.filter_by(user_id=user_id)
+                .filter(UserModuleProgress.progress_percentage >= 10)
+                .distinct(UserModuleProgress.module_id).count(),
+            'topicsLearned': UserModuleProgress.query.filter_by(user_id=user_id)
+                .filter(UserModuleProgress.progress_percentage >= 10)
+                .distinct(UserModuleProgress.topic_id).count()
         }
+        print(learning_stats)
         
+        print(f"Learning Stats: {learning_stats} for user {user_id}")
         # Session and Overall Stats
         all_user_sessions = UserSession.query.filter_by(user_id=user_id).filter(UserSession.session_duration_seconds.isnot(None)).all()
         total_time_spent_sec = sum(s.session_duration_seconds for s in all_user_sessions)

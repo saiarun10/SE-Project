@@ -24,6 +24,16 @@
     <div v-if="!topicContent && !pdfPath" class="no-content-message">
       Content for this topic is not yet available.
     </div>
+
+    <!-- Mark as Complete button -->
+    <button
+      v-if="isAuthenticated"
+      class="complete-btn"
+      @click="markAsComplete"
+      :disabled="loading"
+    >
+      Mark as Complete
+    </button>
   </div>
   <AppFooter />
 </template>
@@ -43,7 +53,6 @@ export default {
     Alert
   },
  
-  // Add this props definition
   props: {
     lessonId: String,
     moduleId: String,
@@ -84,7 +93,6 @@ export default {
         return;
       }
 
-      // Validate required parameters
       if (!this.lessonId || !this.moduleId || !this.topicId) {
         this.error = 'Missing required parameters (lessonId, moduleId, or topicId).';
         this.alert = { visible: true, message: this.error, type: 'error' };
@@ -115,9 +123,7 @@ export default {
         this.topicTitle = topicData.topic_title || 'Untitled Topic';
         this.topicContent = topicData.topic_content || '';
 
-        // Handle PDF path - UNCOMMENT AND UPDATE THIS:
         if (topicData.has_pdf) {
-          // Add token as query parameter for iframe requests
           this.pdfPath = `${import.meta.env.VITE_BASE_URL}/api/lesson/${this.lessonId}/module/${this.moduleId}/topic/${this.topicId}/pdf?token=${this.token}`;
         } else {
           this.pdfPath = '';
@@ -129,12 +135,13 @@ export default {
           hasPdf: !!this.pdfPath
         });
 
+        // Mark topic as started
+        await this.markAsStarted();
+
       } catch (err) {
         console.error('Error loading topic content:', err);
         
-        // Handle different types of errors
         if (err.response) {
-          // Server responded with error status
           const status = err.response.status;
           if (status === 404) {
             this.error = 'Topic not found.';
@@ -144,14 +151,78 @@ export default {
             this.error = err.response.data?.error || `Server error: ${status}`;
           }
         } else if (err.request) {
-          // Network error
           this.error = 'Network error. Please check your connection and try again.';
         } else {
-          // Other error
           this.error = 'Failed to load topic content. Please try again.';
         }
         
         this.alert = { visible: true, message: this.error, type: 'error' };
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async markAsStarted() {
+      try {
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${this.token}`,
+            'Content-Type': 'application/json'
+          }
+        };
+
+        await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/api/progress/lesson/${this.lessonId}/module/${this.moduleId}/topic/${this.topicId}/start`,
+          {},
+          config
+        );
+
+        console.log('Topic marked as started');
+      } catch (err) {
+        console.error('Error marking topic as started:', err);
+        // Don't show error to user, as this is a background operation
+      }
+    },
+
+    async markAsComplete() {
+      if (!this.isAuthenticated) {
+        this.alert = { visible: true, message: 'Please log in to mark topic as complete.', type: 'error' };
+        return;
+      }
+
+      try {
+        this.loading = true;
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${this.token}`,
+            'Content-Type': 'application/json'
+          }
+        };
+
+        const response = await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/api/progress/lesson/${this.lessonId}/module/${this.moduleId}/topic/${this.topicId}/complete`,
+          {},
+          config
+        );
+
+        this.alert = { visible: true, message: 'Topic marked as complete!', type: 'success' };
+        console.log('Topic marked as complete:', response.data);
+      } catch (err) {
+        console.error('Error marking topic as complete:', err);
+        let errorMessage = 'Failed to mark topic as complete. Please try again.';
+        if (err.response) {
+          const status = err.response.status;
+          if (status === 404) {
+            errorMessage = 'Topic not found.';
+          } else if (status === 403) {
+            errorMessage = 'Access denied. Please check your permissions.';
+          } else {
+            errorMessage = err.response.data?.error || `Server error: ${status}`;
+          }
+        } else if (err.request) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        }
+        this.alert = { visible: true, message: errorMessage, type: 'error' };
       } finally {
         this.loading = false;
       }
@@ -167,16 +238,14 @@ export default {
     },
 
     goBack() {
-      // Navigate back to module view
       this.$router.push({
-        name: 'ModuleView', // or whatever your module route name is
+        name: 'ModuleView',
         params: {
           id: this.lessonId
         }
       });
     },
 
-    // Fallback method for static content (keep for backward compatibility)
     loadStaticContent() {
       const topicMap = {
         1: { title: 'What is a Stock?', file: 'stock-intro.pdf' },
@@ -199,22 +268,19 @@ export default {
 
   async mounted() {
     this.lessonId = this.lessonId || this.$route.params.lessonId;
-  this.moduleId = this.moduleId || this.$route.params.moduleId;
-  this.topicId = this.topicId || this.$route.params.topicId;
+    this.moduleId = this.moduleId || this.$route.params.moduleId;
+    this.topicId = this.topicId || this.$route.params.topicId;
 
-  console.log('Topic component mounted with params:', {
-    lessonId: this.lessonId,
-    moduleId: this.moduleId,
-    topicId: this.topicId
-  });
+    console.log('Topic component mounted with params:', {
+      lessonId: this.lessonId,
+      moduleId: this.moduleId,
+      topicId: this.topicId
+    });
 
-
-    // Load topic content from database
     await this.loadTopicContent();
   },
 
   watch: {
-    // Watch for route changes
     async '$route.params'(newParams) {
       this.lessonId = newParams.lessonId;
       this.moduleId = newParams.moduleId;
@@ -250,7 +316,7 @@ export default {
   border: 1px solid #ccc;
 }
 
-.back-btn {
+.back-btn, .complete-btn {
   background: #52575b;
   color: white;
   border: none;
@@ -262,9 +328,15 @@ export default {
   align-items: center;
   gap: 8px;
   transition: background-color 0.3s ease;
+  margin-bottom: 10px;
 }
 
-.back-btn:hover {
+.back-btn:hover, .complete-btn:hover {
   background: #3d4145;
+}
+
+.complete-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
 }
 </style>

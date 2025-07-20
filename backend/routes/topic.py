@@ -1,14 +1,14 @@
 from flask import Blueprint, request, send_file
 from flask_restx import Namespace, Resource, fields, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from model import db, Topic, User, Module, Lesson
+from model import UserModuleProgress, db, Topic, User, Module, Lesson
 from api_utils import get_current_ist
 from datetime import datetime
 import magic
 import io
 
 # Define the topic namespace
-topic_ns = Namespace('topic', description='Topic operations')
+topic_ns = Namespace('topic', description='Topic operations  (Learn Module/Admin Module - Teach about so many fundamental topics like Stock Market ,Money Management, Budgeting Techniques , Financial Planning and Other Financial Literacy topics.)')
 
 # Define request/response models
 topic_model = topic_ns.model('Topic', {
@@ -20,7 +20,16 @@ topic_model = topic_ns.model('Topic', {
     'created_at': fields.DateTime(description='Creation date'),
     'updated_at': fields.DateTime(description='Last updated date')
 })
-
+progress_model = topic_ns.model('Progress', {
+    'progress_id': fields.Integer,
+    'user_id': fields.Integer,
+    'module_id': fields.Integer,
+    'topic_id': fields.Integer,
+    'started_at': fields.DateTime,
+    'completed_at': fields.DateTime,
+    'last_accessed_at': fields.DateTime,
+    'progress_percentage': fields.Integer
+})
 create_topic_model = topic_ns.model('CreateTopic', {
     'topic_title': fields.String(required=True, description='Topic title')
 })
@@ -197,6 +206,185 @@ class TopicPDF(Resource):
             print(f"PDF serve error: {str(e)}")
             return {'error': 'Failed to serve PDF'}, 500
 
+
+@topic_ns.route('/progress/lesson/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/start')
+class StartProgress(Resource):
+    @topic_ns.doc('start_progress', description='Mark topic as started.', security='BearerAuth')
+    @jwt_required()
+    @topic_ns.response(200, 'Progress started', progress_model)
+    @topic_ns.response(401, 'Unauthorized: Missing or invalid token', error_model)
+    @topic_ns.response(404, 'Resource not found', error_model)
+    @topic_ns.response(500, 'Internal server error', error_model)
+    def post(self, lesson_id, module_id, topic_id):
+        try:
+            user_id = get_jwt_identity()
+            user = User.query.filter_by(user_id=user_id).first()
+            if not user:
+                abort(404, 'User not found')
+
+            lesson = Lesson.query.filter_by(lesson_id=lesson_id).first()
+            if not lesson:
+                abort(404, 'Lesson not found')
+
+            module = Module.query.filter_by(module_id=module_id, lesson_id=lesson_id, deleted_at=None).first()
+            if not module:
+                abort(404, 'Module not found')
+
+            topic = Topic.query.filter_by(topic_id=topic_id, module_id=module_id, deleted_at=None).first()
+            if not topic:
+                abort(404, 'Topic not found')
+
+            progress = UserModuleProgress.query.filter_by(
+                user_id=user_id,
+                module_id=module_id,
+                topic_id=topic_id
+            ).first()
+
+            if not progress:
+                progress = UserModuleProgress(
+                    user_id=user_id,
+                    module_id=module_id,
+                    topic_id=topic_id,
+                    started_at=get_current_ist(),
+                    last_accessed_at=get_current_ist(),
+                    progress_percentage=0
+                )
+                db.session.add(progress)
+            else:
+                progress.last_accessed_at = get_current_ist()
+
+            db.session.commit()
+
+            return {
+                'progress_id': progress.progress_id,
+                'user_id': progress.user_id,
+                'module_id': progress.module_id,
+                'topic_id': progress.topic_id,
+                'progress_percentage': progress.progress_percentage
+            }, 200
+
+        except Exception as e:
+            db.session.rollback()
+            abort(500, f'Internal server error: {str(e)}')
+
+@topic_ns.route('/progress/lesson/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>/complete')
+class CompleteProgress(Resource):
+    @topic_ns.doc('complete_progress', description='Mark topic as completed.', security='BearerAuth')
+    @jwt_required()
+    @topic_ns.response(200, 'Progress completed', progress_model)
+    @topic_ns.response(401, 'Unauthorized: Missing or invalid token', error_model)
+    @topic_ns.response(404, 'Resource not found', error_model)
+    @topic_ns.response(500, 'Internal server error', error_model)
+    def post(self, lesson_id, module_id, topic_id):
+        try:
+            user_id = get_jwt_identity()
+            user = User.query.filter_by(user_id=user_id).first()
+            if not user:
+                abort(404, 'User not found')
+
+            lesson = Lesson.query.filter_by(lesson_id=lesson_id).first()
+            if not lesson:
+                abort(404, 'Lesson not found')
+
+            module = Module.query.filter_by(module_id=module_id, lesson_id=lesson_id, deleted_at=None).first()
+            if not module:
+                abort(404, 'Module not found')
+
+            topic = Topic.query.filter_by(topic_id=topic_id, module_id=module_id, deleted_at=None).first()
+            if not topic:
+                abort(404, 'Topic not found')
+
+            progress = UserModuleProgress.query.filter_by(
+                user_id=user_id,
+                module_id=module_id,
+                topic_id=topic_id
+            ).first()
+
+            if not progress:
+                progress = UserModuleProgress(
+                    user_id=user_id,
+                    module_id=module_id,
+                    topic_id=topic_id,
+                    started_at=get_current_ist(),
+                    last_accessed_at=get_current_ist(),
+                    progress_percentage=0
+                )
+                db.session.add(progress)
+
+            progress.completed_at = get_current_ist()
+            progress.progress_percentage = 100
+            progress.last_accessed_at = get_current_ist()
+            db.session.commit()
+
+            return {
+                'progress_id': progress.progress_id,
+                'user_id': progress.user_id,
+                'module_id': progress.module_id,
+                'topic_id': progress.topic_id,
+                'progress_percentage': progress.progress_percentage
+            }, 200
+
+        except Exception as e:
+            db.session.rollback()
+            abort(500, f'Internal server error: {str(e)}')
+
+@topic_ns.route('/progress/lesson/<int:lesson_id>/module/<int:module_id>/topic/<int:topic_id>')
+class ProgressStatus(Resource):
+    @topic_ns.doc('get_progress', description='Get progress status for a specific topic.', security='BearerAuth')
+    @jwt_required()
+    @topic_ns.marshal_with(progress_model, code=200)
+    @topic_ns.response(401, 'Unauthorized: Missing or invalid token', error_model)
+    @topic_ns.response(404, 'Resource not found', error_model)
+    @topic_ns.response(500, 'Internal server error', error_model)
+    def get(self, lesson_id, module_id, topic_id):
+        try:
+            user_id = get_jwt_identity()
+            user = User.query.filter_by(user_id=user_id).first()
+            if not user:
+                abort(404, 'User not found')
+
+            lesson = Lesson.query.filter_by(lesson_id=lesson_id).first()
+            if not lesson:
+                abort(404, 'Lesson not found')
+
+            module = Module.query.filter_by(module_id=module_id, lesson_id=lesson_id, deleted_at=None).first()
+            if not module:
+                abort(404, 'Module not found')
+
+            topic = Topic.query.filter_by(topic_id=topic_id, module_id=module_id, deleted_at=None).first()
+            if not topic:
+                abort(404, 'Topic not found')
+
+            progress = UserModuleProgress.query.filter_by(
+                user_id=user_id,
+                module_id=module_id,
+                topic_id=topic_id
+            ).first()
+
+            if not progress:
+                return {
+                    'progress_id': None,
+                    'user_id': user_id,
+                    'module_id': module_id,
+                    'topic_id': topic_id,
+                    'started_at': None,
+                    'completed_at': None,
+                    'last_accessed_at': None,
+                    'progress_percentage': 0
+                }, 200
+
+            return {
+                'progress_id': progress.progress_id,
+                'user_id': progress.user_id,
+                'module_id': progress.module_id,
+                'topic_id': progress.topic_id,
+                'progress_percentage': progress.progress_percentage
+            }, 200
+
+        except Exception as e:
+            abort(500, f'Internal server error: {str(e)}')
+         
+         
 @topic_ns.route('/<int:lesson_id>/module/<int:module_id>/topic/create')
 class CreateTopic(Resource):
     @topic_ns.doc('create_topic', description='Create a new topic.', security='BearerAuth')

@@ -5,7 +5,7 @@ from model import db, Lesson, User
 from api_utils import get_current_ist
 
 # Define the lesson namespace
-lesson_ns = Namespace('lesson', description='Lesson operations')
+lesson_ns = Namespace('lesson', description='Lesson operations (Learn Module/Admin Module - Teach about so many fundamental topics like Stock Market ,Money Management, Budgeting Techniques , Financial Planning and Other Financial Literacy topics.)')
 
 # Define request/response models
 lesson_model = lesson_ns.model('Lesson', {
@@ -22,13 +22,12 @@ error_model = lesson_ns.model('Error', {
 
 @lesson_ns.route('/get_all_lessons')
 class Lessons(Resource):
-    @lesson_ns.doc('get_all_lessons', description='Retrieve all lessons.', security='BearerAuth')
+    @lesson_ns.doc('get_all_lessons', description='Learn Module - Retrieve all lessons for the authenticated user. Teach about the available lessons like Stock Market ,Money Management, Budgeting Techniques , Financial Planning and Other Financial Literacy topics.', security='BearerAuth')
     @jwt_required()
     @lesson_ns.marshal_list_with(lesson_model, code=200)
     @lesson_ns.response(401, 'Unauthorized: Missing or invalid token', error_model)
     @lesson_ns.response(500, 'Unexpected error', error_model)
     def get(self):
-        """Retrieve all lessons."""
         try:
             user_id = get_jwt_identity()
             user = User.query.filter_by(user_id=user_id).first()

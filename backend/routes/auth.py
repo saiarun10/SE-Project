@@ -9,7 +9,7 @@ import pytz
 
 
 # Define the auth namespace
-auth_ns = Namespace('auth', description='Authentication operations')
+auth_ns = Namespace('auth', description='JWT based Authentication operations (User Signup, Login, Logout, Validate JWT Token). This module allows users to register, log in, log out, and validate their JWT tokens. It also includes admin and user profile management and premium membership status checks.')
 
 # Define request/response models
 signup_model = auth_ns.model('Signup', {

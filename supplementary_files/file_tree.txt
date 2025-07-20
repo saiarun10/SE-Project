@@ -1,0 +1,112 @@
+../
+├── backend
+│   ├── api_utils.py
+│   ├── app.log
+│   ├── app.py
+│   ├── classes_Diagram.plantuml
+│   ├── config.py
+│   ├── .env
+│   ├── .gitignore
+│   ├── model.py
+│   ├── packages_Diagram.plantuml
+│   ├── requirements.txt
+│   ├── requirement_win.txt
+│   ├── routes
+│   │   ├── auth.py
+│   │   ├── chatbot.py
+│   │   ├── expense.py
+│   │   ├── __init__.py
+│   │   ├── lesson.py
+│   │   ├── module.py
+│   │   ├── profile.py
+│   │   ├── quiz.py
+│   │   ├── summary.py
+│   │   ├── topic.py
+│   │   └── user_payment.py
+│   ├── seed_dummy_data.py
+│   ├── setup_db.py
+│   ├── swagger documentation.yaml
+│   └── swagger_setup.py
+├── documentation
+│   ├── github guide for code_reviewer.md
+│   ├── github guide for developer.md
+│   └── Project Setup Guide.md
+├── frontend
+│   ├── .env.development
+│   ├── .env.production
+│   ├── .gitignore
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   └── favicon.ico
+│   ├── README.md
+│   ├── src
+│   │   ├── App.vue
+│   │   ├── assets
+│   │   │   ├── 305.jpg
+│   │   │   ├── 3556960.jpg
+│   │   │   ├── Awareness.png
+│   │   │   ├── calc_interest.png
+│   │   │   ├── calc_loancompare.png
+│   │   │   ├── calc_regular.png
+│   │   │   ├── calculator.png
+│   │   │   ├── Calculator.png
+│   │   │   ├── chart.jpg
+│   │   │   ├── Chatbot.png
+│   │   │   ├── Expenses.png
+│   │   │   ├── Home_page.png
+│   │   │   ├── invest.png
+│   │   │   ├── Learn.png
+│   │   │   ├── logo.png
+│   │   │   ├── quiz.png
+│   │   │   └── Quiz.png
+│   │   ├── components
+│   │   │   ├── Alert.vue
+│   │   │   ├── ChatBot.vue
+│   │   │   ├── Footer.vue
+│   │   │   ├── Home_Features.vue
+│   │   │   ├── Home_Navbar.vue
+│   │   │   ├── Home_Reviews.vue
+│   │   │   └── Navbar.vue
+│   │   ├── main.js
+│   │   ├── router
+│   │   │   └── index.js
+│   │   ├── store
+│   │   │   └── index.js
+│   │   └── views
+│   │       ├── AboutView.vue
+│   │       ├── AddContentView.vue
+│   │       ├── AddModuleView.vue
+│   │       ├── AddTopicView.vue
+│   │       ├── AdminDashboard.vue
+│   │       ├── CalculatorView.vue
+│   │       ├── ChatBotPage.vue
+│   │       ├── ContactView.vue
+│   │       ├── CustomCalculatorInterestView.vue
+│   │       ├── CustomCalculatorLoancompareView.vue
+│   │       ├── GenerateQuizView.vue
+│   │       ├── HomeView.vue
+│   │       ├── Login.vue
+│   │       ├── Profile.vue
+│   │       ├── RegularCalculatorView.vue
+│   │       ├── Signup.vue
+│   │       ├── UserAddExpenseView.vue
+│   │       ├── UserAwarenessView.vue
+│   │       ├── UserBuyPremiumView.vue
+│   │       ├── UserDashboard.vue
+│   │       ├── UserExamInterface.vue
+│   │       ├── USerExpenseInterfaceView.vue
+│   │       ├── UserExpenseTrackerView.vue
+│   │       ├── UserLessonView.vue
+│   │       ├── UserModuleView.vue
+│   │       ├── UserQuizView.vue
+│   │       ├── UserSummary.vue
+│   │       └── UserTopicView.vue
+│   ├── vite.config.js
+│   └── .vscode
+│       └── extensions.json
+├── .gitignore
+└── Readme.md
+
+13 directories, 97 files

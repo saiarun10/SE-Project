@@ -17,7 +17,7 @@ if not stripe.api_key:
     raise ValueError("Stripe API key is not set in environment variables.")
 
 # --- Namespace Definition ---
-user_payment_ns = Namespace('payment', description='User payment and status operations')
+user_payment_ns = Namespace('payment', description='Get the Premium Membership for This Financial Literacy App. This module allows users to create a Stripe Checkout session for premium membership and verify payment status.')
 
 # Parser for the verification endpoint
 verify_parser = reqparse.RequestParser()

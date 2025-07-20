@@ -10,6 +10,16 @@ This project consists of a **Flask** backend and a **Vue.js 3** frontend. Follow
 * **Node.js 18+** and **npm** (for frontend)
 ---
 
+## Cloning the Repository
+
+Clone the repository to your local environment:
+
+```bash
+git clone https://github.com/saiarun10/SE-Project.git
+cd SE-Project
+```
+
+
 ## 🔧 Backend Setup (Flask)
 
 1. **Navigate to backend folder**:
@@ -46,9 +56,16 @@ This project consists of a **Flask** backend and a **Vue.js 3** frontend. Follow
 
 4. **Install dependencies**:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+   * Windows:
+
+     ```bash
+     pip install -r requirements_win.txt
+     ```
+   * macOS/Linux:
+
+     ```bash
+     pip install -r requirements.txt
+     ```
 
 5. **Set up the database**:
    Ensure `.env` is correctly set up (see below). Then run:
@@ -56,14 +73,19 @@ This project consists of a **Flask** backend and a **Vue.js 3** frontend. Follow
    ```bash
    python setup_db.py
    ```
-
-6. **Run the Flask server**:
+   can also append dummy data to database using below command
+   ```bash
+   python seed_dummy_data.py
+   ```
+6. **Run the Backend(Flask) server**:
 
    ```bash
    python app.py
    ```
 
    The backend runs at: `http://localhost:5000`
+   
+   The Swagger UI is available at: `http://localhost:5000/docs` to testing the backend apis
 
 ---
 
@@ -123,6 +145,11 @@ LOG_FILE="app.log"
 
 # Frontend URL
 FRONTEND_URL="http://localhost:5173"
+
+# Sensitive API Keys
+GROQ_API_KEY="Your Groq API Key"
+STRIPE_API_SECRET_KEY= "Your Stripe API Secret Key"
+
 ```
 
 ### 📁 `.env.development` (Frontend)
@@ -150,7 +177,7 @@ VITE_BASE_URL=http://localhost:5000
 ```json
 {
   "username": "shib",
-  "email": "shibkumarsaraf2001@gmail.com",
+  "email": "shib1@gmail.com",
   "password": "12345678"
 }
 ```

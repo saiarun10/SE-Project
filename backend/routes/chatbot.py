@@ -64,7 +64,7 @@ except ValueError as e:
 
 # --- User-Facing Chatbot API ---
 
-chatbot_ns = Namespace('chatbot', description='Chatbot operations for users')
+chatbot_ns = Namespace('chatbot', description='AI Driven Modern Chatbot for Financial Literacy - Interact with a friendly AI chatbot to learn about financial concepts, ask questions, and get personalized advice on topics like saving, budgeting, and investing.')
 
 # API Models for user-facing chatbot
 chat_request_model = chatbot_ns.model('ChatRequest', {

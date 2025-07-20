@@ -1,107 +1,216 @@
-# Project Setup Guide
+# 🚀 Project Setup Guide
 
 This project consists of a **Flask** backend and a **Vue.js 3** frontend. Follow the instructions below to set up and run the project locally.
 
-## Prerequisites
-- **Python 3.8+** installed for the backend
-- **Node.js 18+** and **npm** installed for the frontend
-- **Git** for cloning the repository (optional)
+---
 
-## Project Structure
-- `backend/`: Contains the Flask backend code
-- `frontend/`: Contains the Vue.js 3 frontend code
-- `.env`: Configuration file for the backend
-- `.env.development`: Configuration file for the frontend
+## ✅ Prerequisites
 
-## Backend Setup (Flask)
+* **Python 3.8+** (for backend)
+* **Node.js 18+** and **npm** (for frontend)
+---
 
-1. **Navigate to the backend directory**:
+## Cloning the Repository
+
+Clone the repository to your local environment:
+
+```bash
+git clone https://github.com/saiarun10/SE-Project.git
+cd SE-Project
+```
+
+
+## 🔧 Backend Setup (Flask)
+
+1. **Navigate to backend folder**:
+
    ```bash
    cd backend
    ```
 
 2. **Create a virtual environment**:
-   - On Windows:
+
+   * Windows:
+
      ```bash
      python -m venv venv
      ```
-   - On macOS/Linux:
+   * macOS/Linux:
+
      ```bash
      python3 -m venv venv
      ```
 
+3. **Activate the environment**:
 
+   * Windows:
 
-3. **Activate the virtual environment**:
-   - On Windows:
      ```bash
      .\venv\Scripts\activate
      ```
-   - On macOS/Linux:
+   * macOS/Linux:
+
      ```bash
      source venv/bin/activate
      ```
 
-4. **Install backend dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+4. **Install dependencies**:
+
+   * Windows:
+
+     ```bash
+     pip install -r requirements_win.txt
+     ```
+   * macOS/Linux:
+
+     ```bash
+     pip install -r requirements.txt
+     ```
 
 5. **Set up the database**:
-   Ensure the `.env` file is configured with the correct database settings (e.g., `SQLALCHEMY_DATABASE_URI="sqlite:///database.db"`). Then run:
+   Ensure `.env` is correctly set up (see below). Then run:
+
    ```bash
    python setup_db.py
    ```
+   can also append dummy data to database using below command
+   ```bash
+   python seed_dummy_data.py
+   ```
+6. **Run the Backend(Flask) server**:
 
-6. **Run the Flask application**:
    ```bash
    python app.py
    ```
-   The backend will be available at `http://localhost:5000` (or as specified in `.env.development`).
 
-## Frontend Setup (Vue.js 3)
+   The backend runs at: `http://localhost:5000`
+   
+   The Swagger UI is available at: `http://localhost:5000/docs` to testing the backend apis
 
-1. **Navigate to the frontend directory**:
+---
+
+## 🖥️ Frontend Setup (Vue.js 3)
+
+1. **Navigate to frontend folder**:
+
    ```bash
    cd frontend
    ```
 
 2. **Install frontend dependencies**:
+
    ```bash
    npm install
    ```
 
-3. **Configure the frontend**:
-   Ensure the `.env.development` file contains the correct backend URL (e.g., `VITE_BASE_URL=http://localhost:5000`).
+3. **Check `.env.development`**:
 
-4. **Run the Vue.js development server**:
+   ```env
+   VITE_BASE_URL=http://localhost:5000
+   ```
+
+4. **Start the Vue dev server**:
+
    ```bash
    npm run dev
    ```
-   The frontend will be available at `http://localhost:5173` (or as specified in `.env.development`).
 
-## Environment Configuration
+   The frontend will be live at: `http://localhost:5173`
 
-- **Backend (.env)**:
-  - `FLASK_ENV`: Set to `development` for local development.
-  - `DEBUG`: Set to `True` for debugging.
-  - `SECRET_KEY`: A secure key for Flask sessions.
-  - `SECURITY_PASSWORD_SALT`: Salt for password hashing.
-  - `SQLALCHEMY_DATABASE_URI`: Database connection string (e.g., `sqlite:///database.db`).
-  - `SQLALCHEMY_TRACK_MODIFICATIONS`: Set to `False` to disable tracking.
-  - `LOG_LEVEL` and `LOG_FILE`: Optional logging configuration.
-  - `FRONTEND_URL`: URL of the frontend (e.g., `http://localhost:5173`).
+---
 
-- **Frontend (.env.development)**:
-  - `VITE_BASE_URL`: Backend API URL (e.g., `http://localhost:5000`).
+## 🔐 Environment Configuration
 
-## Running the Project
+### 📁 `.env` (Backend)
 
-1. Start the backend server (Flask) as described in the Backend Setup section.
-2. Start the frontend development server (Vue.js) as described in the Frontend Setup section.
-3. Access the application in your browser at `http://localhost:5173`.
+```env
+# General Flask Config
+FLASK_ENV=development
+DEBUG=True
+SECRET_KEY="thisissecret"
+SECURITY_PASSWORD_SALT="thisissaltt"
 
-## Notes
-- Ensure both `.env` and `.env.development` files are correctly configured before running the application.
-- If you encounter issues, verify that the backend and frontend ports match the configurations in the environment files.
-- For production, update `FLASK_ENV` to `production` and adjust other settings as needed.
+# JWT Configuration
+JWT_SECRET_KEY="jwtsecretkey"
+JWT_ACCESS_TOKEN_EXPIRES=3600
+JWT_REFRESH_TOKEN_EXPIRES=86400
+
+# Database
+SQLALCHEMY_DATABASE_URI="sqlite:///database.db"
+SQLALCHEMY_TRACK_MODIFICATIONS=False
+
+# Logging (Optional)
+LOG_LEVEL="INFO"
+LOG_FILE="app.log"
+
+# Frontend URL
+FRONTEND_URL="http://localhost:5173"
+
+# Sensitive API Keys
+GROQ_API_KEY="Your Groq API Key"
+STRIPE_API_SECRET_KEY= "Your Stripe API Secret Key"
+
+```
+
+### 📁 `.env.development` (Frontend)
+
+```env
+VITE_BASE_URL=http://localhost:5000
+```
+
+---
+
+## 👥 Test User Credentials
+
+### 👑 Admin Login
+
+```json
+{
+  "username": "21f1001520",
+  "email": "21f1001520@ds.study.iitm.ac.in",
+  "password": "123456"
+}
+```
+
+### 🙋 Regular User Login
+
+```json
+{
+  "username": "shib",
+  "email": "shib1@gmail.com",
+  "password": "12345678"
+}
+```
+
+---
+
+## ▶️ Running the Full App
+
+1. Start backend server (Flask):
+
+   ```bash
+   cd backend
+   source venv/bin/activate  # or activate on Windows
+   python app.py
+   ```
+
+2. Start frontend server (Vue):
+
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+3. Open browser:
+
+   ```
+   http://localhost:5173
+   ```
+
+---
+
+## 📝 Notes
+
+* Make sure `.env` and `.env.development` are present and properly configured.
+* The backend (`http://localhost:5000`) and frontend (`http://localhost:5173`) should match your configs.
+* For production, set `FLASK_ENV=production` and configure secure secrets and domains.

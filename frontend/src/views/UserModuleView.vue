@@ -18,9 +18,9 @@
         <h1 class="page-title">Learn {{ currentLesson?.title }}, {{ userName }}</h1>
 
        
-        <div class="topic-icon-header" @click="openCalculator">
+        <!-- <div class="topic-icon-header" @click="openCalculator">
           <img src="@/assets/calculator.png" alt="Calculator" class="calculator-icon" />
-        </div>
+        </div> -->
       </div>
 
       <!-- Loading State -->
@@ -122,7 +122,7 @@
       </div>
     </div>
 
-    <!-- Floating Calculator Window -->
+    <!-- Floating Calculator Window
     <div v-if="showCalculator" class="floating-calculator-overlay" @click="closeCalculator">
       <div class="floating-calculator-window" @click.stop>
         <div class="floating-calculator-header">
@@ -135,7 +135,7 @@
           <Calculator />
         </div>
       </div>
-    </div>
+    </div> -->
 
     
   </div>
@@ -167,7 +167,7 @@ export default {
       currentLesson: null,
       lessonId: null,
       expandedModule: null,
-      showCalculator: false,
+      // showCalculator: false,
       modules: [],
       topics: {}, // This should be reactive in Vue 3
       alert: { visible: false, message: '', type: '' }
@@ -278,13 +278,13 @@ export default {
       return lessonTitles[lessonId] || `Lesson ${lessonId}`;
     },
 
-    openCalculator() {
-      this.showCalculator = true;
-    },
+    // openCalculator() {
+    //   this.showCalculator = true;
+    // },
     
-    closeCalculator() {
-      this.showCalculator = false;
-    },
+    // closeCalculator() {
+    //   this.showCalculator = false;
+    // },
 
       selectTopic(module, topic) {
       // Handle both raw database objects and mapped objects
@@ -727,15 +727,15 @@ export default {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
-
+/* 
 .calculator-icon {
   width: 48px;
   height: 48px;
   object-fit: cover;
   border-radius: 4px;
-}
+} */
 
-/* Floating Calculator Styles */
+/* Floating Calculator Styles
 .floating-calculator-overlay {
   position: fixed;
   top: 0;
@@ -774,7 +774,7 @@ export default {
   margin: 0;
   color: #333;
   font-size: 1.2rem;
-}
+} */
 
 .close-btn {
   background: #dc3545;
@@ -799,11 +799,11 @@ export default {
   box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
 }
 
-.floating-calculator-content {
+/* .floating-calculator-content {
   padding: 0;
   max-height: calc(80vh - 70px);
   overflow-y: auto;
-}
+} */
 
 /* Responsive Design */
 @media (max-width: 768px) {

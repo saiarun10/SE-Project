@@ -6,7 +6,7 @@ from api_utils import get_current_ist
 from datetime import datetime
 
 # Define the module namespace
-module_ns = Namespace('module', description='Module operations')
+module_ns = Namespace('module', description='Module operations  (Learn Module/Admin Module - Teach about the  so many fundamental topics like Stock Market ,Money Management, Budgeting Techniques , Financial Planning and Other Financial Literacy topics.)')
 
 # Define request/response models
 module_model = module_ns.model('Module', {

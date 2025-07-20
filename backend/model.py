@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date
 from api_utils import get_current_ist
+
 # Initialize SQLAlchemy
 db = SQLAlchemy()
 
@@ -260,11 +261,3 @@ class StoryInteraction(db.Model):
     __table_args__ = (
         db.UniqueConstraint('user_id', 'story_id', name='idx_interactions_user_story'),
     )
-
-
-
-    # for class diagram: pyreverse routes/ -o plantuml -p Diagram
-    #                    pyreverse routes model -o plantuml -p Diagram
-
-    # for erd diagram :  eralchemy -i sqlite:///database.db -o erd.dot
-    #                    dot -Tpng erd.dot -o database_erd.png
