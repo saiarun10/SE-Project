@@ -1,6 +1,7 @@
 # config.py
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 # Load environment variables from .env file
 load_dotenv()
@@ -9,6 +10,7 @@ class Config:
     """Base configuration"""
     DEBUG = False
     TESTING = False
+    
     # Logging Configuration
     try:
         LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
@@ -16,6 +18,7 @@ class Config:
         LOG_FORMAT = os.environ.get("LOG_FORMAT", "%(asctime)s - %(levelname)s - %(message)s")
     except KeyError as e:
         raise KeyError(f"Missing required environment variable: {e}")   
+        
     @staticmethod
     def init_logging():
         import logging
@@ -32,44 +35,37 @@ class Config:
         # Add the file handler to the root logger
         logging.getLogger().addHandler(file_handler)        
 
+
     # General Config
-    try:
-        SECRET_KEY = os.environ["SECRET_KEY"]
-        SECURITY_PASSWORD_SALT = os.environ["SECURITY_PASSWORD_SALT"]
-    except KeyError as e:
-        raise KeyError(f"Missing required environment variable: {e}")
+    SECRET_KEY = os.environ.get("SECRET_KEY", "a-default-secret-key")
+    SECURITY_PASSWORD_SALT = os.environ.get("SECURITY_PASSWORD_SALT", "a-default-salt")
    
-    try:
-        # JWT Configuration
-        JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
-        JWT_ACCESS_TOKEN_EXPIRES = int(os.environ.get("JWT_ACCESS_TOKEN_EXPIRES", 3600))  # Default to 1 hour
-        JWT_REFRESH_TOKEN_EXPIRES = int(os.environ.get("JWT_REFRESH_TOKEN_EXPIRES", 86400))  # Default to 24 hours
-    except KeyError as e:
-        raise KeyError(f"Missing required environment variable: {e}")
+    # JWT Configuration
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "a-default-jwt-secret")
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=int(os.environ.get("JWT_ACCESS_TOKEN_EXPIRES", 1)))
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=int(os.environ.get("JWT_REFRESH_TOKEN_EXPIRES", 1)))
 
     # Database
-    try:
-        SQLALCHEMY_DATABASE_URI = os.environ["SQLALCHEMY_DATABASE_URI"]
-        SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS", "false").lower() == "true"
-    except KeyError as e:
-        raise KeyError(f"Missing required environment variable: {e}")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS", "false").lower() == "true"
     
-    try:
-        # Groq API Key
-        GROQ_API_KEY = os.environ["GROQ_API_KEY"]
-    except KeyError as e:
-        raise KeyError(f"Missing required environment variable: {e}")
+    # Groq API Key
+    GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
     
-    try:
-        # Frontend URL for CORS
-        FRONTEND_URL = os.getenv("FRONTEND_URL")
-    except KeyError as e:
-        raise KeyError(f"Missing required environment variable: {e}")
+    # Frontend URL for CORS
+    FRONTEND_URL = os.getenv("FRONTEND_URL")
     
 
 class DevelopmentConfig(Config):
     """Development Configuration"""
     DEBUG = True
+
+class TestingConfig(Config):
+    """Testing Configuration"""
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    WTF_CSRF_ENABLED = False 
 
 class ProductionConfig(Config):
     """Production Configuration"""
@@ -81,4 +77,7 @@ def get_config():
     env = os.getenv("FLASK_ENV", "development").lower()
     if env == "production":
         return ProductionConfig
+    # The conftest.py will set TESTING=True, but we can also select by an env var
+    if env == "testing" or os.environ.get('TESTING'):
+        return TestingConfig
     return DevelopmentConfig

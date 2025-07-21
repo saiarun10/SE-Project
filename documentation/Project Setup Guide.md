@@ -87,6 +87,30 @@ cd SE-Project
    
    The Swagger UI is available at: `http://localhost:5000/docs` to testing the backend apis
 
+7. **Run Tests** (Optional):
+   To run the tests for backend apis which are defined under `backend/tests` folder , ensure you have the test dependencies installed, activated venv and then run:
+
+   * For macOS/Linux users:
+   ```bash
+   cd backend
+   pytest tests/ 
+   ```
+      or 
+   ```bash
+   cd backend
+   pytest tests/ -v  # for verbose output
+   ```
+   
+   * For Windows users:
+   ```bash
+   cd backend
+   python -m pytest tests/
+   ```
+      or 
+   ```bash
+   cd backend
+   python -m pytest tests/ -v  # for verbose output
+   ```
 ---
 
 ## 🖥️ Frontend Setup (Vue.js 3)

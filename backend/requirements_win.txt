@@ -104,3 +104,8 @@ langchain
 langchain-groq
 groq
 stripe
+pytest
+pytest-flask
+pytest-mock
+pytest-sugar
+pytest-html
