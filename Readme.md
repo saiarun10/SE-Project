@@ -109,11 +109,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For questions, collaborations, or further details, please reach out:
 - **Name:** Shib Kumar Saraf
-- **LinkedIn:** [Shib Kumar Saraf][https://www.linkedin.com/in/shibkumarsaraf/]
 - **Email:** [shibkumarsaraf05@gmail.com](mailto:shibkumarsaraf05@gmail.com)  
-- **GitHub:** [@shib1111111](https://github.com/shib1111111)
 
-  
 ## Conclusion
 GrowUp Richie aims to empower children with essential financial knowledge through engaging and interactive learning experiences. The platform's features, from quizzes to chatbot interactions, are designed to make financial literacy accessible and enjoyable for young learners.
 
