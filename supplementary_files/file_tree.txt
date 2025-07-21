@@ -9,8 +9,9 @@
 │   ├── .gitignore
 │   ├── model.py
 │   ├── packages_Diagram.plantuml
+│   ├── pytest.ini
 │   ├── requirements.txt
-│   ├── requirement_win.txt
+│   ├── requirements_win.txt
 │   ├── routes
 │   │   ├── auth.py
 │   │   ├── chatbot.py
@@ -25,8 +26,20 @@
 │   │   └── user_payment.py
 │   ├── seed_dummy_data.py
 │   ├── setup_db.py
-│   ├── swagger documentation.yaml
-│   └── swagger_setup.py
+│   ├── swagger_setup.py
+│   └── tests
+│       ├── conftest.py
+│       ├── __init__.py
+│       ├── test_auth.py
+│       ├── test_chatbot.py
+│       ├── test_expense.py
+│       ├── test_lesson.py
+│       ├── test_module.py
+│       ├── test_profile.py
+│       ├── test_quiz.py
+│       ├── test_summary.py
+│       ├── test_topic.py
+│       └── test_user_payment.py
 ├── documentation
 │   ├── github guide for code_reviewer.md
 │   ├── github guide for developer.md
@@ -103,10 +116,14 @@
 │   │       ├── UserQuizView.vue
 │   │       ├── UserSummary.vue
 │   │       └── UserTopicView.vue
-│   ├── vite.config.js
-│   └── .vscode
-│       └── extensions.json
+│   └── vite.config.js
 ├── .gitignore
-└── Readme.md
+├── Readme.md
+└── supplementary_files
+    ├── classes_Diagram.plantuml
+    ├── database_erd.png
+    ├── file_tree.txt
+    ├── packages_Diagram.plantuml
+    └── swagger documentation.yaml
 
-13 directories, 97 files
+14 directories, 113 files

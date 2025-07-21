@@ -61,7 +61,7 @@ echo "--------------------------------------------------"
 echo "Step 1: Generating project file tree..."
 # The 'tree' command is run on the parent directory of the script ('../')
 # Updated exclusion list to match the correct swagger script name.
-tree -a -I "venv|__pycache__|.git|node_modules|instance|supplementary_files|diagrams|create_diagram.sh|generate_swagger_yaml.py|*.db" ../ > "$FILE_TREE_OUTPUT"
+tree -a -I "venv|__pycache__|.pytest_cache|.git|node_modules|instance|.vscode|diagrams|create_diagram.sh|generate_swagger_yaml.py|*.db" ../ > "$FILE_TREE_OUTPUT"
 if [ $? -eq 0 ]; then
     echo "Success: File tree saved to $FILE_TREE_OUTPUT"
 else

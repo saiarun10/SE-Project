@@ -73,7 +73,7 @@ instance/
 # Sphinx documentation
 docs/_build/
 backend/instance/database.db
-
+*.db
 # PyBuilder
 .pybuilder/
 target/
